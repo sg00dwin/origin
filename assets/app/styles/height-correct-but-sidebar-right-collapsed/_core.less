@@ -1,20 +1,34 @@
-// height-incorrect-but-sidebar-right-correct
+// height-correct-but-sidebar-right-collapsed
 // 
 
 //
-// Core
+// Core 
 // --------------------------------------------------
 
 html, body {
   height: 100%;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
 }
 
 .console-os {
   background-color: @body-bg;
   #content-wrap {
-    height: 100%;
+    // height: 100%;
+    .flex-display(@display: flex);
+    .flex(@columns: 1 0 auto);
+    .flex-direction(@direction: column);
     .content {
-      height: 100%;
+      // height: 100%;
+      .flex-display(@display: flex);
+      .flex(@columns: 1 0 auto);
+      .flex-direction(@direction: column);
+      .project-page {
+        .flex-display(@display: flex);
+        .flex(@columns: 1 0 auto);
+        .flex-direction(@direction: column);
+      }
     }
   }
   .container-main {
@@ -34,6 +48,7 @@ html, body {
   .navbar {
     border: none;
     margin-bottom: 0;
+    flex: none;
   }
   .navbar-pf {
     background: @navbar-os-bg-color;
@@ -367,8 +382,4 @@ select:invalid {
   &.osc-object-active {
     box-shadow: 0px 0px 0px 2px #00a8e1;
   }  
-}
-
-.col-full-height {
-  height: 100%;
 }

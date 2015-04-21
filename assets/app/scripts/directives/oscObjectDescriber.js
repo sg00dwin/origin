@@ -13,7 +13,24 @@ angular.module('openshiftConsole')
         });
         scope.$on('$destroy', function() {
           ObjectDescriber.removeResourceChangedCallback(callback);
-        });    
+          $(window).off('resize.oscObjectDescriber');
+          $(window).off('scroll.oscObjectDescriber');
+        });
+        $('.js-affix',elem).affix({
+          offset: {
+            top: 200,
+          }
+        });
+        function width(){
+          var width = Number($('.js-affix').closest(".sidebar-content").width());
+          $('.js-affix').css({"width": width});
+        }
+        $(window).on('resize.oscObjectDescriber', function(){
+          width();
+        });
+        $(window).on('scroll.oscObjectDescriber', function(){
+          width();
+        }); 
       }
     };
   })

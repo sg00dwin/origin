@@ -1,4 +1,4 @@
-// height-incorrect-but-sidebar-right-correct
+// height-correct-but-sidebar-right-collapsed
 // 
 
 //
@@ -100,6 +100,8 @@
       .sidebar-right {
         .sidebar-header {
           border-color: @page-header-border-color;
+          margin-right: 0;
+          margin-top: 45px;
         }
         h3 {
           border-top: 1px solid darken(@page-header-border-color, 2%);
@@ -107,6 +109,7 @@
           &:last-child {
             border-top: 0;
             padding-top: 0;
+            margin-top: 0;
           }
         }
         .dl-horizontal {
@@ -207,16 +210,15 @@
           border-left: 1px solid @navbar-os-project-border-color;
           .flex(@columns: 0 0 @sidebar-right-width-sm);
           position: relative;
-          height: 100%;
+          // height: 100%;
           .sidebar-wrap {
             padding-left: 20px;
             display: flex;
             flex-direction: column;
+            .flex(@columns: 1 0 auto);
             height: 100%;
             width: 100%;
             .sidebar-header {
-              margin-right: 0;
-              margin-top: 45px;
             }
             .sidebar-content {
               padding-bottom: 30px;
@@ -230,11 +232,11 @@
                 .js-affix {
                   box-sizing: border-box;
                   height: 100%;
-                  overflow-x: hidden;
+                  // overflow-x: hidden;
                   overflow-y: auto;
                   width: 100%;
                   .sidebar-body {
-                    padding: 0 5px 50px 0;
+                    padding: 20px 20px 50px 0;
                   }
                   &.affix {
                     top: 0;

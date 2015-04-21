@@ -1,6 +1,13 @@
-<div>
-  <div ng-if="!resource">
-    Select an object to see more details.
+<div class="sidebar-content">
+  <div class="sidebar-scrollable">
+    <div class="js-affix">
+      <div class="sidebar-body">
+        <div ng-if="!resource">
+          Select an object to see more details.
+        </div>
+        <kubernetes-object-describer kind="{{kind}}" resource="resource" ng-if="resource"></kubernetes-object-describer>
+        <!-- <div style="border:1px solid slategrey;height: 1200px;padding: 20px; width: 100px">ADDING HEIGHT</div> -->
+      </div>
+    </div>
   </div>
-  <kubernetes-object-describer kind="{{kind}}" resource="resource" ng-if="resource"></kubernetes-object-describer>
 </div>

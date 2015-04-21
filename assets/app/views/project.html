@@ -1,10 +1,11 @@
 <div ng-controller="ProjectController" class="content">
-  <project-page>
+  <project-page class="project-page">
     <div ng-controller="OverviewController">
       <tasks></tasks>
       <div class="page-header page-header-bleed-right">
         <h1>Project {{project.displayName || project.metadata.name}}</h1>
       </div>
+      <!-- <div style="border:1px solid slategrey;height: 1000px;padding: 20px; width: 100px">ADDING HEIGHT</div> -->
       <!-- TODO handle things that don't live under services -->
       <alerts alerts="alerts"></alerts>
       <div ng-if="(services | hashSize) == 0">
