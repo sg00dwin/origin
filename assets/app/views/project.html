@@ -108,24 +108,36 @@
                      them if they are idled down to zero for example.
                 -->
                 <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)" class="osc-object replication-controller components-panel deployment-block" kind="ReplicationController" resource="deployment" ng-if="(podsByDeployment[deployment.metadata.name] | hashSize) > 0">
-                Here
-                  <div class="metadata" ng-if="deployment">
-                    <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
-                    <span ng-if="deployment.details && deployment.details.causes && deployment.details.causes.length > 0">
-                      <span>, triggered by 
-                        <span class="deployment-trigger" ng-repeat="cause in deployment.details.causes">
-                          <span ng-switch="cause.type">
-                            <span ng-switch-when="ImageChange">new image for {{cause.imageTrigger.repositoryName | imageStreamName}}:{{cause.imageTrigger.tag}}</span>
-                            <span ng-switch-when="ConfigChange">deployment configuration change</span>
+                  <div class="connector">
+                    <i class="fa fa-search"></i>
+                  </div>
+                  <div ng-if="deployment">
+                    <div class="component-block">
+                      <div class="component">
+                        <div class="component-label" ng-if="deploymentConfigId">Deployment</div>
+                        <div class="component-label" ng-if="!deploymentConfigId">Replication Controller</div>
+                        <h3 class="h4">{{deployment.metadata.name}}</h3>
+                      </div>
+                      <div class="component meta-data">
+                        <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
+                        <span ng-if="deployment.details && deployment.details.causes && deployment.details.causes.length > 0">
+                          <span>, triggered by 
+                            <span class="deployment-trigger" ng-repeat="cause in deployment.details.causes">
+                              <span ng-switch="cause.type">
+                                <span ng-switch-when="ImageChange">new image for {{cause.imageTrigger.repositoryName | imageStreamName}}:{{cause.imageTrigger.tag}}</span>
+                                <span ng-switch-when="ConfigChange">deployment configuration change</span>
+                              </span>
+                            </span>
                           </span>
                         </span>
-                      </span>
-                    </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="pod-block">
                     <!-- TODO figure out why podTemplate can't be done the same way as pods -->
                     <div class="component-label">Pod Template</div>
                     <pod-template ng-init="podTemplate = deployment.spec.template"></pod-template>
+                    <div class="component-label">Pods</div>
                     <pods pods="podsByDeployment[deployment.metadata.name]"></pods>
                   </div>
                 </div>
@@ -134,10 +146,13 @@
             <!-- Now go through any of the pods that are routed to by the service but not part of a deployment -->
               <div ng-repeat="(podName, pod) in monopodsByService[serviceId]">
                 <div class="ng-scope tile-container components-panel deployment-block">
+                  <div class="connector">
+                    <i class="fa fa-search"></i>
+                  </div>
                   <div class="component-block component-meta">
                     <div class="component">
-                      <span class="component-label">Deployment</span>
-                      <h3 class="h4"></h3>
+                      <span class="component-label">Pod</span>
+                      <h3 class="h4">{{podName}}</h3>
                     </div>
                     <div class="component meta-data">
                       <relative-timestamp timestamp="pod.metadata.creationTimestamp"></relative-timestamp>
@@ -146,6 +161,7 @@
                   <div class="pod-block">
                     <div class="component-label">Pod Template</div>
                     <pod-template ng-init="podTemplate = pod"></pod-template>
+                    <div class="component-label">Pod Status</div>
                     <pods pods="[pod]"></pods>
                   </div>
                 </div>
@@ -184,16 +200,19 @@
                   <div ng-if="deploymentConfigs[deploymentConfigId] && deploymentConfigsByService[''][deploymentConfigId]">
                     <triggers triggers="deploymentConfigs[deploymentConfigId].triggers"></triggers>
                   </div>                
+                  <!--
                   <deployment-config-metadata
                     deployment-config-id="deploymentConfigId"
                     exists="deploymentConfigs[deploymentConfigId]"
                     different-service="!deploymentConfigsByService[''][deploymentConfigId]">
                   </deployment-config-metadata>                
+                  -->
                   <div class="osc-object tile-container-DEFUNCT components-panel deployment-block replication-controller" kind="ReplicationController" resource="deployment">
                     <div class="component-block component-meta">
                       <div class="component">
-                        <span class="component-label">Replication Controller</span>
-                        <h3 class="h4"></h3>
+                        <div class="component-label" ng-if="deploymentConfigId">Deployment</div>
+                        <div class="component-label" ng-if="!deploymentConfigId">Replication Controller</div>
+                        <h3 class="h4">{{deploymentId}}</h3>
                       </div>
                       <div class="component meta-data">
                         <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
@@ -212,6 +231,7 @@
                     <div class="pod-block">
                       <div class="component-label">Pod Template</div>
                       <pod-template ng-init="podTemplate = deployment.spec.template"></pod-template>
+                      <div class="component-label">Pods</div>
                       <pods pods="podsByDeployment[deployment.metadata.name]"></pods>
                     </div>
                   </div>        
@@ -234,8 +254,8 @@
               <div class="ng-scope tile-container-DEFUNCT components-panel deployment-block deployments">
                 <div class="component-block component-meta">
                   <div class="component">
-                    <span class="component-label"></span>
-                    <h3 class="h4"></h3>
+                    <span class="component-label">Pod</span>
+                    <h3 class="h4">podName</h3>
                   </div>
                   <div class="component meta-data">
                     <relative-timestamp timestamp="pod.metadata.creationTimestamp"></relative-timestamp>
@@ -244,7 +264,7 @@
                 <div class="pod-block">
                   <div class="component-label">Pod Template</div>
                   <pod-template ng-init="podTemplate = pod"></pod-template>
-                  <div class="component-label">Pods</div>
+                  <div class="component-label">Pod Status</div>
                   <pods pods="[pod]"></pods>
                 </div>
               </div>        
