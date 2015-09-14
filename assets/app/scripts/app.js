@@ -121,21 +121,36 @@ angular
       .when('/project/:project/browse/builds', {
         templateUrl: 'views/builds.html'
       })
+      .when('/project/:project/browse/builds/:build', {
+        templateUrl: 'views/build.html'
+      })      
       .when('/project/:project/browse/deployments', {
         templateUrl: 'views/deployments.html'
       })
+      .when('/project/:project/browse/deployments/:deployment', {
+        templateUrl: 'views/deployment.html'
+      })      
       .when('/project/:project/browse/events', {
         templateUrl: 'views/events.html'
       })
       .when('/project/:project/browse/images', {
         templateUrl: 'views/images.html'
       })
+      .when('/project/:project/browse/images/:image', {
+        templateUrl: 'views/images.html'
+      })      
       .when('/project/:project/browse/pods', {
         templateUrl: 'views/pods.html'
       })
+      .when('/project/:project/browse/pods/pod', {
+        templateUrl: 'views/pod.html'
+      })      
       .when('/project/:project/browse/services', {
         templateUrl: 'views/services.html'
       })
+      .when('/project/:project/browse/services/:service', {
+        templateUrl: 'views/service.html'
+      })      
       .when('/project/:project/catalog/templates', {
         templateUrl: 'views/catalog/templates.html'
       })

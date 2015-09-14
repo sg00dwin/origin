@@ -14,6 +14,7 @@ angular.module('openshiftConsole')
 
       return {
         get: function(projectName) {
+          console.log("IS IT GETTING HERE");
           return  AuthService
                     .withUser()
                     .then(function() {
