@@ -1,0 +1,84 @@
+<div ng-controller="BuildController">
+  <project-page>
+    <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
+    <alerts alerts="alerts"></alerts>
+    <div class="well build-well" ng-if="build">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <h3>{{build.metadata.name}}</h3>
+        </div>
+      </div><!-- /.row -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="build-detail">
+            <span class="build-detail-label">Status:</span>
+            <span ng-switch="build.status.phase" class="hide-ng-leave">
+              <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
+              <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
+              <span ng-switch-when="Error" class="fa fa-times text-danger" aria-hidden="true"></span>
+              <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>
+              <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
+              <span ng-switch-default class="fa fa-refresh fa-spin" aria-hidden="true"></span>
+            </span>
+            {{build.status.phase}}
+
+            <button class="btn btn-default build-status-button btn-primary" ng-click="cancelBuild(build, buildConfigName)" ng-if="build | isIncompleteBuild">Cancel</button>
+            <button class="btn btn-default build-status-button" ng-click="cloneBuild(build.metadata.name)" ng-hide="build | isIncompleteBuild" ng-disabled="(buildConfigBuildsInProgress[buildConfigName] | hashSize) !== 0">Rebuild</button>
+          </div>
+          <div class="build-detail">
+            <span class="build-detail-label">Created:</span><relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp>
+          </div>
+          <div class="build-detail" ng-if="build.status.startTimestamp">
+            <span class="build-detail-label">Started:</span>
+            <relative-timestamp timestamp="build.status.startTimestamp"></relative-timestamp>
+            <span>- {{(build.status.startTimestamp || build.metadata.creationTimestamp) | date : 'short'}}</span>
+          </div>          
+          <div class="build-detail">
+            <span class="build-detail-label">Duration:</span>
+            <span ng-switch="build.status.phase" class="hide-ng-leave">
+              <span ng-switch-when="Complete">{{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>
+              <span ng-switch-when="Failed">{{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
+              <span ng-switch-when="Running">running for <duration-until-now timestamp="build.status.startTimestamp"></duration-until-now></span>
+              <span ng-switch-when="New">waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
+              <span ng-switch-when="Pending">waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
+              <span ng-switch-default>
+                <span ng-if="build.status.startTimestamp">{{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
+                <span ng-if="!build.status.startTimestamp">waited for {{build.metadata.creationTimestamp | duration : build.status.completionTimestamp}}</span>
+              </span>
+            </span>
+          </div>
+        </div><!-- .col -->
+        <div class="col-md-6">
+          <div class="build-detail" ng-if="buildConfig.spec.strategy.type != build.spec.strategy.type">
+            <span class="build-detail-label">Build configuration:</span><a href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfigName}}">{{buildConfigName}}</a>
+          </div>        
+          <div class="build-detail" ng-if="buildConfig.spec.strategy.type != build.spec.strategy.type">
+            <span class="build-detail-label">Build strategy:</span>{{build.spec.strategy.type}}
+          </div>
+          <div class="build-detail" ng-switch="build.spec.strategy.type">
+            <div ng-switch-when="Source" ng-if="build.spec.strategy.sourceStrategy.from">
+              <span class="build-detail-label">Builder image:</span>{{build.spec.strategy.sourceStrategy.from | imageObjectRef : build.metadata.namespace}}
+            </div>
+            <div ng-switch-when="Docker">
+              <div ng-if="build.spec.strategy.dockerStrategy.from">
+                <span class="build-detail-label">Builder image:</span>{{build.spec.strategy.dockerStrategy.from | imageObjectRef : build.metadata.namespace}}
+              </div>
+            </div>
+            <div ng-switch-when="Custom" ng-if="build.spec.strategy.customStrategy.from">
+              <span class="build-detail-label">Builder image:</span>{{build.spec.strategy.customStrategy.from | imageObjectRef : build.metadata.namespace}}
+            </div>
+          </div>
+          <div ng-if="build.spec.source">
+            <div ng-if="build.spec.source.type == 'Git'">
+              <div class="build-detail" ng-if="buildConfig.spec.source.git.uri != build.spec.source.git.uri">
+                <span class="build-detail-label">Source repo:</span><span ng-bind-html='build.spec.source.git.uri | githubLink | linky'></span>
+              </div>
+            </div>
+            <!-- TODO add git ref details -->
+          </div>
+          <div ng-if="build.spec.output.to" class="build-detail"><span class="build-detail-label">Output image:</span>{{build.spec.output.to | imageObjectRef : build.metadata.namespace}}</div>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /build .well -->
+  </project-page>
+</div>

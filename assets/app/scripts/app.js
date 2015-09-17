@@ -121,14 +121,17 @@ angular
       .when('/project/:project/browse/builds', {
         templateUrl: 'views/builds.html'
       })
-      .when('/project/:project/browse/builds/:build', {
-        templateUrl: 'views/build.html'
-      })      
+      .when('/project/:project/browse/builds/:buildconfig', {
+        templateUrl: 'views/browse/build-config.html'
+      })
+      .when('/project/:project/browse/builds/:buildconfig/:build', {
+        templateUrl: 'views/browse/build.html'
+      })
       .when('/project/:project/browse/deployments', {
         templateUrl: 'views/deployments.html'
       })
       .when('/project/:project/browse/deployments/:deployment', {
-        templateUrl: 'views/deployment.html'
+        templateUrl: 'views/browse/deployment.html'
       })      
       .when('/project/:project/browse/events', {
         templateUrl: 'views/events.html'
@@ -137,19 +140,19 @@ angular
         templateUrl: 'views/images.html'
       })
       .when('/project/:project/browse/images/:image', {
-        templateUrl: 'views/images.html'
+        templateUrl: 'views/browse/image.html'
       })      
       .when('/project/:project/browse/pods', {
         templateUrl: 'views/pods.html'
       })
-      .when('/project/:project/browse/pods/pod', {
-        templateUrl: 'views/pod.html'
+      .when('/project/:project/browse/pods/:pod', {
+        templateUrl: 'views/browse/pod.html'
       })      
       .when('/project/:project/browse/services', {
         templateUrl: 'views/services.html'
       })
       .when('/project/:project/browse/services/:service', {
-        templateUrl: 'views/service.html'
+        templateUrl: 'views/browse/service.html'
       })      
       .when('/project/:project/catalog/templates', {
         templateUrl: 'views/catalog/templates.html'

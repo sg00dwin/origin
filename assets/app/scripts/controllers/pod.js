@@ -11,8 +11,23 @@ angular.module('openshiftConsole')
   .controller('PodController', function ($scope, $routeParams, DataService, project) {
     $scope.pod = null;
     $scope.alerts = {};
-console.log("is it getting in the controller");
-    project.get($routeParams.project).then(function() {
+    $scope.renderOptions = $scope.renderOptions || {};    
+    $scope.renderOptions.hideFilterWidget = true;    
+    $scope.breadcrumbs = [
+      {
+        title: "Pods",
+        link: "project/" + $routeParams.project + "/browse/pods"
+      },
+      {
+        title: $routeParams.pod
+      }
+    ];
+
+    project.get($routeParams.project).then(function(resp) {
+      angular.extend($scope, {
+        project: resp[0],
+        projectPromise: resp[1].projectPromise
+      });
       DataService.get("pods", $routeParams.pod, $scope).then(
         // success
         function(pod) {

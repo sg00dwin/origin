@@ -109,6 +109,15 @@ angular.module('openshiftConsole')
       templateUrl: 'views/_project-page.html'
     };
   })
+  .directive('breadcrumbs', function() {
+    return {
+      restrict: 'E',
+      scope: {
+        breadcrumbs: '='
+      },      
+      templateUrl: 'views/directives/breadcrumbs.html'
+    };
+  })  
   .directive('back', ['$window', function($window) {
     return {
       restrict: 'A',

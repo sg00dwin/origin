@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('BuildsController', function ($scope, DataService, $filter, LabelFilter, Logger, $location, $anchorScroll) {
+  .controller('BuildsController', function ($scope, DataService, $filter, LabelFilter, Logger, $location, $anchorScroll, BuildsService) {
     $scope.builds = {};
     $scope.unfilteredBuilds = {};
     $scope.buildConfigs = {};
@@ -21,6 +21,7 @@ angular.module('openshiftConsole')
     $scope.defaultBuildLimit = 3;
 
     $scope.buildsByBuildConfig = {};
+    $scope.expandedBuildConfigRow = {};
 
     var watches = [];
 
@@ -41,7 +42,7 @@ angular.module('openshiftConsole')
       }
       if (!action) {
         // Loading of the page that will create buildConfigBuildsInProgress structure, which will associate running build to his buildConfig.
-        $scope.buildConfigBuildsInProgress = associateRunningBuildToBuildConfig($scope.buildsByBuildConfig);
+        $scope.buildConfigBuildsInProgress = BuildsService.associateRunningBuildToBuildConfig($scope.unfilteredBuilds);
       } else if (action === 'ADDED'){
         // When new build id instantiated/cloned associate him to his buildConfig and add him into buildConfigBuildsInProgress structure.
         $scope.buildConfigBuildsInProgress[buildConfigName] = $scope.buildConfigBuildsInProgress[buildConfigName] || {};
@@ -80,20 +81,6 @@ angular.module('openshiftConsole')
       });
     }
 
-    function associateRunningBuildToBuildConfig(buildsByBuildConfig) {
-      var buildConfigBuildsInProgress = {};
-      angular.forEach(buildsByBuildConfig, function(buildConfigBuilds, buildConfigName) {
-        buildConfigBuildsInProgress[buildConfigName] = {};
-        angular.forEach(buildConfigBuilds, function(build, buildName) {
-          var buildStatus = build.status.phase;
-          if (buildStatus === "New" || buildStatus === "Pending" || buildStatus === "Running") {
-            buildConfigBuildsInProgress[buildConfigName][buildName] = build;
-          }
-        });
-      });
-      return buildConfigBuildsInProgress;
-    }
-
     function updateFilterWarning() {
       if (!LabelFilter.getLabelSelector().isEmpty() && $.isEmptyObject($scope.builds) && !$.isEmptyObject($scope.unfilteredBuilds)) {
         $scope.alerts["builds"] = {
@@ -106,88 +93,16 @@ angular.module('openshiftConsole')
       }
     }
 
-    // Function which will 'instantiate' new build from given buildConfigName
     $scope.startBuild = function(buildConfigName) {
-      var req = {
-        kind: "BuildRequest",
-        apiVersion: "v1",
-        metadata: {
-          name: buildConfigName
-        }
-      };
-      DataService.create("buildconfigs/instantiate", buildConfigName, req, $scope).then(
-        function(build) { //success
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Build " + build.metadata.name + " has started."
-            }
-          ];
-        },
-        function(result) { //failure
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred while starting the build.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+      BuildsService.startBuild(buildConfigName, $scope);
     };
 
     $scope.cancelBuild = function(build, buildConfigName) {
-      var canceledBuild = angular.copy(build);
-      canceledBuild.status.cancelled = true;
-      DataService.update("builds", canceledBuild.metadata.name, canceledBuild, $scope).then(
-        function() {
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Cancelling build " + build.metadata.name + " of " + buildConfigName + ".",
-            }
-          ];
-        },
-        function(result) {
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred cancelling the build.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+      BuildsService.cancelBuild(build, buildConfigName, $scope);
     };
 
-    // Function which will 'clone' build from given buildName
     $scope.cloneBuild = function(buildName) {
-      var req = {
-        kind: "BuildRequest",
-        apiVersion: "v1",
-        metadata: {
-          name: buildName
-        }
-      };
-      DataService.create("builds/clone", buildName, req, $scope).then(
-        function(build) { //success
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Build " + buildName + " is being rebuilt as " + build.metadata.name + "."
-            }
-          ];
-        },
-        function(result) { //failure
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred while rerunning the build.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+      BuildsService.cloneBuild(buildName, $scope);
     };
 
     LabelFilter.onActiveFiltersChanged(function(labelSelector) {

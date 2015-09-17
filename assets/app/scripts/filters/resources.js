@@ -647,4 +647,43 @@ angular.module('openshiftConsole')
       });
       return podsForPhase;
     };
+  })
+  .filter('numContainersReady', function() {
+    return function(pod) {
+      var numReady = 0;
+      angular.forEach(pod.status.containerStatuses, function(status) {
+        if (status.ready) {
+          numReady++;
+        }
+      });
+      return numReady;
+    };
+  })
+  .filter('numContainerRestarts', function() {
+    return function(pod) {
+      var numRestarts = 0;
+      angular.forEach(pod.status.containerStatuses, function(status) {
+        numRestarts += status.restartCount;
+      });
+      return numRestarts;
+    };
+  })
+  .filter('newestResource', function() {
+    return function(resources) {
+      var newest = null;
+      angular.forEach(resources, function(resource) {
+        if (!newest) {
+          if (resource.metadata.creationTimestamp) {
+            newest = resource;
+          }
+          else {
+            return;
+          }
+        }
+        else if (moment(newest.metadata.creationTimestamp).isBefore(resource.metadata.creationTimestamp)) {
+          newest = resource;
+        }
+      });
+      return newest;
+    };
   });
