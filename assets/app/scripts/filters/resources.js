@@ -592,7 +592,7 @@ angular.module('openshiftConsole')
             return depConfig.details.causes;
           case "v1beta3":
           case "v1":
-            return  depConfig.status.details.causes;
+            return  depConfig.status.details ? depConfig.status.details.causes : [];
           default:
           // Unrecognized API version. Log an error.
           Logger.error('Unknown API version "' + depConfig.apiVersion +

@@ -8,6 +8,89 @@
       <div ng-if="(deploymentConfigs | hashSize) === 0 && (deploymentsByDeploymentConfig | hashSize) === 0">
         <em>{{emptyMessage}}</em>
       </div>
+      <table class="table table-bordered" style="background: white;">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Trigger</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- hidden tr to start the ng-repeat for the build config -->
+          <tr ng-repeat-start="(deploymentConfigName, deploymentConfigDeployments) in deploymentsByDeploymentConfig" style="display: none;"></tr>
+          <!-- TODO handle no deployment for a deployment config -->
+          <tr ng-repeat="deployment in deploymentConfigDeployments | orderObjectsByDate : true" ng-if="$first || expandedDeploymentConfigRow[deploymentConfigName]">
+            <td>
+              <span ng-if="$first || deploymentConfigName == ''">
+                <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployments/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
+                <span ng-if="!deploymentConfigs[deploymentConfigName] && deploymentConfigName != ''">
+                  {{deploymentConfigName}}
+                  <span class="pficon-layered" data-toggle="tooltip" data-placement="right" title="This deployment config no longer exists" style="cursor: help;">
+                    <span class="pficon pficon-warning-triangle"></span>
+                    <span class="pficon pficon-warning-exclamation"></span>
+                  </span>                    
+                </span>
+                <!-- TODO make this case better... this is the replication controller that is not a deployment -->
+                <span ng-if="!deploymentConfigs[deploymentConfigName] && deploymentConfigName == ''">
+                  <em>No deployment config</em>
+                </span>
+              </span>
+            </td>
+            <td>
+              <!-- Deployment number and link -->
+              <span ng-if="deployment | annotation : 'deploymentVersion'">
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfigName}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
+              </span>
+              <span ng-if="!(deployment | annotation : 'deploymentVersion')">
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfigName}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
+              </span>
+              <!-- Deployment status -->
+              <span ng-switch="deploymentStatus(deployment)" class="hide-ng-leave">
+                <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>              
+                <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
+                <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
+                <span ng-switch-when="New" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
+                <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
+                <span ng-switch-default class="fa fa-refresh fa-spin" aria-hidden="true"></span>
+              </span>
+              {{deploymentStatus(deployment)}}
+              <!-- TODO would be nice to have the deploymentStatusReason in a popup, when there is one -->
+            </td>
+            <td>
+              <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
+              <span>- {{deployment.metadata.creationTimestamp | date : 'short'}}</span>            
+            </td>
+            <td>
+              <span ng-if="!deployment.causes.length">Unknown</span>
+              <span ng-if="deployment.causes.length">
+                <span ng-repeat="cause in deployment.causes">
+                  <span ng-switch="cause.type">
+                    <span ng-switch-when="ImageChange">
+                      <span ng-if="cause.imageTrigger.from">
+                        <abbr title="{{cause.imageTrigger.from | imageObjectRef : null : true}}">Image</abbr> change
+                      </span>
+                    </span>
+                    <span ng-switch-when="ConfigChange">Config change</span>
+                    <span ng-switch-default>{{cause.type}}</span>
+                  </span>
+                </span>
+              </span>              
+            </td>
+            <td>
+              <span ng-if="$first && !$last">
+                <a href="" ng-click="expandedDeploymentConfigRow[deploymentConfigName] = true" ng-if="!expandedDeploymentConfigRow[deploymentConfigName]">Deployment history</a>
+                <a href="" ng-click="expandedDeploymentConfigRow[deploymentConfigName] = false" ng-if="expandedDeploymentConfigRow[deploymentConfigName]">Hide history</a>              
+              </span>
+            </td>
+          </tr>
+          <tr ng-repeat-end style="display: none;"></tr> <!-- hidden tr to stop the ng-repeat for the build config -->
+        </tbody>
+      </table>
+
+
 
       <div class="tile" ng-repeat="(deploymentConfigName, deploymentConfig) in deploymentConfigs track by (deploymentConfig | uid)">
         <div> 
@@ -49,7 +132,7 @@
                 <dt>Manual:</dt>
                 <dd>
                   <span>
-                    <button class="btn btn-primary" ng-click="startLatestDeployment(deploymentConfigName)" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0">Start Deployment</button>
+                    <button class="btn btn-primary" ng-click="startLatestDeployment(deploymentConfig)" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0">Start Deployment</button>
                   </span>
                 </dd>
               </dl>
@@ -145,12 +228,12 @@
                         <input type="checkbox" ng-model="changeTriggers" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0"> deployment trigger
                       </label>
                     </div>
-                    <button type="button" ng-click="rollbackToDeployment(deploymentConfigName, deployment.metadata.name, changeScaleSettings, changeStrategy, changeTriggers)" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0" class="btn btn-primary">Roll Back</button>
+                    <button type="button" ng-click="rollbackToDeployment(deployment, changeScaleSettings, changeStrategy, changeTriggers)" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0" class="btn btn-primary">Roll Back</button>
                   </div>
                   <!-- disabled until we have an api endpoint for retry
-                  <button ng-show="deploymentStatus(deployment) == 'Failed'" type="button" ng-click="retryFailedDeployment(deploymentConfigName, deployment.metadata.name)" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0" class="btn btn-primary" ng-if="deploymentIsLatest(deploymentConfig, deployment)">Retry</button>
+                  <button ng-show="deploymentStatus(deployment) == 'Failed'" type="button" ng-click="retryFailedDeployment(deployment)" ng-disabled="(deploymentConfigDeploymentsInProgress[deploymentConfigName] | hashSize) > 0" class="btn btn-primary" ng-if="deploymentIsLatest(deploymentConfig, deployment)">Retry</button>
                   -->
-                  <button ng-show="deploymentIsInProgress(deployment)" type="button" ng-click="cancelRunningDeployment(deploymentConfigName, deployment.metadata.name)" class="btn btn-primary">Cancel</button>
+                  <button ng-show="deploymentIsInProgress(deployment)" type="button" ng-click="cancelRunningDeployment(deployment)" class="btn btn-primary">Cancel</button>
                 </span>                
               </div>
               <div class="deployment-detail">

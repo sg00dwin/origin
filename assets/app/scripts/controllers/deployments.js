@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('DeploymentsController', function ($scope, DataService, $filter, LabelFilter, Logger, ImageStreamResolver) {
+  .controller('DeploymentsController', function ($scope, DataService, $filter, LabelFilter, Logger, ImageStreamResolver, DeploymentsService) {
     $scope.deployments = {};
     $scope.unfilteredDeployments = {};
     // leave undefined so we know when data is loaded
@@ -22,6 +22,7 @@ angular.module('openshiftConsole')
     $scope.labelSuggestions = {};
     $scope.alerts = $scope.alerts || {};
     $scope.emptyMessage = "Loading...";
+    $scope.expandedDeploymentConfigRow = {};
     var watches = [];
 
     function extractPodTemplates() {
@@ -38,7 +39,8 @@ angular.module('openshiftConsole')
       extractPodTemplates();
       ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
       $scope.emptyMessage = "No deployments to show";
-      associateDeploymentsToDeploymentConfig();
+      $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments);
+      console.log($scope.deploymentsByDeploymentConfig);
       updateFilterWarning();
 
       var deploymentConfigName;
@@ -49,17 +51,29 @@ angular.module('openshiftConsole')
       }
       if (!action) {
         // Loading of the page that will create deploymentConfigDeploymentsInProgress structure, which will associate running deployment to his deploymentConfig.
-        $scope.deploymentConfigDeploymentsInProgress = associateRunningDeploymentToDeploymentConfig($scope.deploymentsByDeploymentConfig);
-      } else if (action === 'ADDED' || (action === 'MODIFIED' && ['New', 'Pending', 'Running'].indexOf(deploymentStatus(deployment)) > -1)) {
+        $scope.deploymentConfigDeploymentsInProgress = DeploymentsService.associateRunningDeploymentToDeploymentConfig($scope.deploymentsByDeploymentConfig);
+      } else if (action === 'ADDED' || (action === 'MODIFIED' && ['New', 'Pending', 'Running'].indexOf(DeploymentsService.deploymentStatus(deployment)) > -1)) {
         // When new deployment id instantiated/cloned, or in case of a retry, associate him to his deploymentConfig and add him into deploymentConfigDeploymentsInProgress structure.
         $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName] = $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName] || {};
         $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName][deploymentName] = deployment;
       } else if (action === 'MODIFIED') {
         // After the deployment ends remove him from the deploymentConfigDeploymentsInProgress structure.
-        var status = deploymentStatus(deployment);
+        var status = DeploymentsService.deploymentStatus(deployment);
         if (status === "Complete" || status === "Failed"){
           delete $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName][deploymentName];
         }
+      }
+
+      // Extract the causes from the encoded deployment config
+      if (deployment) {
+        if (action !== "DELETED") {
+          deployment.causes = $filter('deploymentCauses')(deployment);
+        }
+      }
+      else {
+        angular.forEach($scope.deployments, function(deployment) {
+          deployment.causes = $filter('deploymentCauses')(deployment);
+        });
       }
 
       Logger.log("deployments (subscribe)", $scope.deployments);
@@ -83,31 +97,6 @@ angular.module('openshiftConsole')
       Logger.log("builds (subscribe)", $scope.builds);
     }));
 
-    function associateDeploymentsToDeploymentConfig() {
-      $scope.deploymentsByDeploymentConfig = {};
-      angular.forEach($scope.deployments, function(deployment, deploymentName) {
-        var deploymentConfigName = $filter('annotation')(deployment, 'deploymentConfig');
-        if (deploymentConfigName) {
-          $scope.deploymentsByDeploymentConfig[deploymentConfigName] = $scope.deploymentsByDeploymentConfig[deploymentConfigName] || {};
-          $scope.deploymentsByDeploymentConfig[deploymentConfigName][deploymentName] = deployment;
-        }
-      });
-    }
-
-    function associateRunningDeploymentToDeploymentConfig(deploymentsByDeploymentConfig) {
-      var deploymentConfigDeploymentsInProgress = {};
-      angular.forEach(deploymentsByDeploymentConfig, function(deploymentConfigDeployments, deploymentConfigName) {
-        deploymentConfigDeploymentsInProgress[deploymentConfigName] = {};
-        angular.forEach(deploymentConfigDeployments, function(deployment, deploymentName) {
-          var status = deploymentStatus(deployment);
-          if (status === "New" || status === "Pending" || status === "Running") {
-            deploymentConfigDeploymentsInProgress[deploymentConfigName][deploymentName] = deployment;
-          }
-        });
-      });
-      return deploymentConfigDeploymentsInProgress;
-    }
-
     function updateFilterWarning() {
       if (!LabelFilter.getLabelSelector().isEmpty() && $.isEmptyObject($scope.deployments) && !$.isEmptyObject($scope.unfilteredDeployments)) {
         $scope.alerts["deployments"] = {
@@ -120,210 +109,25 @@ angular.module('openshiftConsole')
       }
     }
 
-    $scope.startLatestDeployment = function(deploymentConfigName) {
-      var deploymentConfig = $scope.deploymentConfigs[deploymentConfigName];
-
-      // increase latest version by one so starts new deployment based on latest
-      var req = {
-        kind: "DeploymentConfig",
-        apiVersion: "v1",
-        metadata: deploymentConfig.metadata,
-        spec: deploymentConfig.spec,
-        status: deploymentConfig.status
-      };
-      if (!req.status.latestVersion) {
-        req.status.latestVersion = 0;
-      }
-      req.status.latestVersion++;
-
-      // update the deployment config
-      DataService.update("deploymentconfigs", deploymentConfigName, req, $scope).then(
-        function() {
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Deployment #" + req.status.latestVersion + " of " + deploymentConfigName + " has started.",
-            }
-          ];
-        },
-        function(result) {
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred while starting the deployment.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+    $scope.startLatestDeployment = function(deploymentConfig) {
+      DeploymentsService.startLatestDeployment(deploymentConfig, $scope)
     };
 
-    $scope.retryFailedDeployment = function(deploymentConfigName, deploymentName) {
-      var deployment = $scope.deploymentsByDeploymentConfig[deploymentConfigName][deploymentName];
-      var req = deployment;
-
-      // TODO: we need a "retry" api endpoint so we don't have to do this manually
-
-      // delete the deployer pod as well as the deployment hooks pods, if any
-      DataService.list("pods", $scope, function(list) {
-        var pods = list.by("metadata.name");
-        var deleteDeployerPod = function(pod) {
-          var deployerPodForAnnotation = $filter('annotationName')('deployerPodFor');
-          if (pod.metadata.labels[deployerPodForAnnotation] === deploymentName) {
-            DataService.delete("pods", pod.metadata.name, $scope).then(
-              function() {
-                Logger.info("Deployer pod " + pod.metadata.name + " deleted");
-              },
-              function(result) {
-                $scope.alerts = [
-                  {
-                    type: "error",
-                    message: "An error occurred while deleting the deployer pod.",
-                    details: $filter('getErrorDetails')(result)
-                  }
-                ];
-              }
-            );
-          }
-        };
-        angular.forEach(pods, deleteDeployerPod);
-      });
-
-      // set deployment to "New" and remove statuses so we can retry
-      var deploymentStatusAnnotation = $filter('annotationName')('deploymentStatus');
-      var deploymentStatusReasonAnnotation = $filter('annotationName')('deploymentStatusReason');
-      var deploymentCancelledAnnotation = $filter('annotationName')('deploymentCancelled');
-      req.metadata.annotations[deploymentStatusAnnotation] = "New";
-      delete req.metadata.annotations[deploymentStatusReasonAnnotation];
-      delete req.metadata.annotations[deploymentCancelledAnnotation];
-
-      // update the deployment
-      DataService.update("replicationcontrollers", deploymentName, req, $scope).then(
-        function() {
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Retrying deployment " + deploymentName + " of " + deploymentConfigName + ".",
-            }
-          ];
-        },
-        function(result) {
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred while retrying the deployment.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+    $scope.retryFailedDeployment = function(deployment) {
+      DeploymentsService.retryFailedDeployment(deployment, $scope);
     };
 
-    $scope.rollbackToDeployment = function(deploymentConfigName, deploymentName, changeScaleSettings, changeStrategy, changeTriggers) {
-      // put together a new rollback request
-      var req = {
-        kind: "DeploymentConfigRollback",
-        apiVersion: "v1",
-        spec: {
-          from: {
-            name: deploymentName
-          },
-          includeTemplate: true,
-          includeReplicationMeta: changeScaleSettings,
-          includeStrategy: changeStrategy,
-          includeTriggers: changeTriggers
-        }
-      };
-
-      // TODO: we need a "rollback" api endpoint so we don't have to do this manually
-
-      // create the deployment config rollback 
-      DataService.create("deploymentconfigrollbacks", null, req, $scope).then(
-        function(newDeploymentConfig) {
-          // update the deployment config based on the one returned by the rollback
-          DataService.update("deploymentconfigs", deploymentConfigName, newDeploymentConfig, $scope).then(
-            function(rolledBackDeploymentConfig) {
-                $scope.alerts = [
-                {
-                  type: "success",
-                  message: "Deployment #" + rolledBackDeploymentConfig.status.latestVersion + " is rolling back " + deploymentConfigName + " to " + deploymentName + ".",
-                }
-              ];
-            },
-            function(result) {
-              $scope.alerts = [
-                {
-                  type: "error",
-                  message: "An error occurred while rolling back the deployment.",
-                  details: $filter('getErrorDetails')(result)
-                }
-              ];
-            }
-          );
-        },
-        function(result) {
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred while rolling back the deployment.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+    $scope.rollbackToDeployment = function(deployment, changeScaleSettings, changeStrategy, changeTriggers) {
+      DeploymentsService.rollbackToDeployment(deployment, changeScaleSettings, changeStrategy, changeTriggers, $scope);
     };
 
-    $scope.cancelRunningDeployment = function(deploymentConfigName, deploymentName) {
-      var deployment = $scope.deploymentsByDeploymentConfig[deploymentConfigName][deploymentName];
-      var req = deployment;
-
-      // TODO: we need a "cancel" api endpoint so we don't have to do this manually
-
-      // set the cancellation annotations
-      var deploymentCancelledAnnotation = $filter('annotationName')('deploymentCancelled');
-      var deploymentStatusReasonAnnotation = $filter('annotationName')('deploymentStatusReason');
-      req.metadata.annotations[deploymentCancelledAnnotation] = "true";
-      req.metadata.annotations[deploymentStatusReasonAnnotation] = "The deployment was cancelled by the user";
-
-      // update the deployment with cancellation annotations
-      DataService.update("replicationcontrollers", deploymentName, req, $scope).then(
-        function() {
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Cancelling deployment " + deploymentName + " of " + deploymentConfigName + ".",
-            }
-          ];
-        },
-        function(result) {
-          $scope.alerts = [
-            {
-              type: "error",
-              message: "An error occurred while cancelling the deployment.",
-              details: $filter('getErrorDetails')(result)
-            }
-          ];
-        }
-      );
+    $scope.cancelRunningDeployment = function(deployment) {
+      DeploymentsService.cancelRunningDeployment(deployment, $scope);
     };
 
-    $scope.deploymentIsLatest = function(deploymentConfig, deployment) {
-      var deploymentVersion = parseInt($filter('annotation')(deployment, 'deploymentVersion'));
-      var deploymentConfigVersion = deploymentConfig.status.latestVersion;
-      return deploymentVersion === deploymentConfigVersion;
-    };
-
-    $scope.deploymentIsInProgress = function(deployment) {
-      return ['New', 'Pending', 'Running'].indexOf(deploymentStatus(deployment)) > -1;
-    };
-
-    // helper function local to the controller
-    function deploymentStatus(deployment) {
-      return $filter('annotation')(deployment, 'deploymentStatus');
-    }
-
-    // exposed for views' use
-    $scope.deploymentStatus = deploymentStatus;
+    $scope.deploymentIsLatest = DeploymentsService.deploymentIsLatest;
+    $scope.deploymentIsInProgress = DeploymentsService.deploymentIsInProgress;
+    $scope.deploymentStatus = DeploymentsService.deploymentStatus;
 
     LabelFilter.onActiveFiltersChanged(function(labelSelector) {
       // trigger a digest loop

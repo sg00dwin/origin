@@ -130,9 +130,12 @@ angular
       .when('/project/:project/browse/deployments', {
         templateUrl: 'views/deployments.html'
       })
-      .when('/project/:project/browse/deployments/:deployment', {
-        templateUrl: 'views/browse/deployment.html'
+      .when('/project/:project/browse/deployments/:deploymentconfig', {
+        templateUrl: 'views/browse/deployment-config.html'
       })      
+      .when('/project/:project/browse/deployments/:deploymentconfig/:deployment', {
+        templateUrl: 'views/browse/deployment.html'
+      })            
       .when('/project/:project/browse/events', {
         templateUrl: 'views/events.html'
       })
