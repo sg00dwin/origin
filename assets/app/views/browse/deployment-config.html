@@ -88,7 +88,7 @@
           </tr>
         </thead>
         <tbody>
-          <!-- TODO handle no deployment for a deployment config -->
+          <tr ng-if="(deploymentsByDeploymentConfig[deploymentConfig.metadata.name] | hashSize) == 0"><td colspan="4"><em>{{emptyMessage}}</em></td></tr>
           <tr ng-repeat="deployment in deploymentsByDeploymentConfig[deploymentConfig.metadata.name] | orderObjectsByDate : true">
             <td>
               <!-- Deployment number and link -->

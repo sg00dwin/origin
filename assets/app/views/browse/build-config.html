@@ -142,7 +142,7 @@
           </tr>
         </thead>
         <tbody>
-          <!-- TODO handle no builds for a build config -->
+          <tr ng-if="(builds | hashSize) == 0"><td colspan="4"><em>{{emptyMessage}}</em></td></tr>
           <tr ng-repeat="build in builds | orderObjectsByDate : true">
             <td>
               <!-- Build number and link -->

@@ -23,6 +23,7 @@ angular.module('openshiftConsole')
         title: $routeParams.buildconfig
       }
     ];
+    $scope.emptyMessage = "Loading...";
 
     var watches = [];
 
@@ -48,6 +49,7 @@ angular.module('openshiftConsole')
 
       watches.push(DataService.watch("builds", $scope, function(builds, action, build) {
         $scope.builds = {};
+        $scope.emptyMessage = "No builds to show";
         // TODO we should send the ?labelSelector=buildconfig=<name> on the API request
         // to only load the buildconfig's builds, but this requires some DataService changes
         var allBuilds = builds.by("metadata.name");

@@ -24,6 +24,7 @@ angular.module('openshiftConsole')
         title: $routeParams.deploymentconfig
       }
     ];
+    $scope.emptyMessage = "Loading...";
 
     var watches = [];
 
