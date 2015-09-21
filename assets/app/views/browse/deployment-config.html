@@ -103,13 +103,14 @@
               <!-- Deployment status -->
               <span ng-switch="deploymentStatus(deployment)" class="hide-ng-leave">
                 <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>              
+                <span ng-switch-when="Deployed" class="fa fa-check text-success" aria-hidden="true"></span>
                 <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
                 <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
                 <span ng-switch-when="New" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
                 <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
                 <span ng-switch-default class="fa fa-refresh fa-spin" aria-hidden="true"></span>
               </span>
-              {{deploymentStatus(deployment)}}
+              {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, {{deployment.spec.replicas}}/{{deployment.status.replicas}} replicas</span>  
               <!-- TODO would be nice to have the deploymentStatusReason in a popup, when there is one -->
             </td>
             <td>

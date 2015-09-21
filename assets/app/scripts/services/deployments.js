@@ -202,7 +202,6 @@ angular.module("openshiftConsole")
     };
 
     DeploymentsService.prototype.deploymentIsInProgress = function(deployment) {
-      console.log(this.deploymentStatus);
       return ['New', 'Pending', 'Running'].indexOf(this.deploymentStatus(deployment)) > -1;
     };
 
@@ -211,17 +210,25 @@ angular.module("openshiftConsole")
       if ($filter('annotation')(deployment, 'deploymentCancelled')) {
         return "Cancelled";
       }
-      return $filter('annotation')(deployment, 'deploymentStatus');
+      var status = $filter('annotation')(deployment, 'deploymentStatus');
+      // If it is just an RC (non-deployment) or it is a deployment with more than 0 replicas
+      if (!this.isDeployment(deployment) || status == "Complete" && deployment.spec.replicas > 0) {
+        return "Deployed";
+      }
+      return status;
+    };
+
+    DeploymentsService.prototype.isDeployment = function(deployment) {
+      return ($filter('annotation')(deployment, 'deploymentConfig')) ? true : false;
     };
 
     DeploymentsService.prototype.associateDeploymentsToDeploymentConfig = function(deployments) {
       var deploymentsByDeploymentConfig = {};
       angular.forEach(deployments, function(deployment, deploymentName) {
         var deploymentConfigName = $filter('annotation')(deployment, 'deploymentConfig');
-        if (deploymentConfigName) {
-          deploymentsByDeploymentConfig[deploymentConfigName] = deploymentsByDeploymentConfig[deploymentConfigName] || {};
-          deploymentsByDeploymentConfig[deploymentConfigName][deploymentName] = deployment;
-        }
+        deploymentConfigName = deploymentConfigName || '';
+        deploymentsByDeploymentConfig[deploymentConfigName] = deploymentsByDeploymentConfig[deploymentConfigName] || {};
+        deploymentsByDeploymentConfig[deploymentConfigName][deploymentName] = deployment;
       });
       return deploymentsByDeploymentConfig;
     };

@@ -10,6 +10,7 @@
 angular.module('openshiftConsole')
   .controller('DeploymentController', function ($scope, $routeParams, DataService, project, DeploymentsService, ImageStreamResolver, $filter) {
     $scope.deployment = null;
+    $scope.deploymentConfig = null;
     $scope.deployments = {};
     $scope.podTemplates = {};
     $scope.alerts = {};
@@ -19,15 +20,18 @@ angular.module('openshiftConsole')
       {
         title: "Deployments",
         link: "project/" + $routeParams.project + "/browse/deployments"
-      },
-      {
-        title: $routeParams.deploymentconfig,
-        link: "project/" + $routeParams.project + "/browse/deployment/" + $routeParams.deploymentconfig
-      },      
-      {
-        title: $routeParams.deployment
       }
     ];
+    // if this is an RC it won't have deploymentconfig
+    if ($routeParams.deploymentconfig){
+      $scope.breadcrumbs.push({
+        title: $routeParams.deploymentconfig,
+        link: "project/" + $routeParams.project + "/browse/deployment/" + $routeParams.deploymentconfig
+      });
+    }
+    $scope.breadcrumbs.push({
+      title: $routeParams.deployment || $routeParams.replicationcontroller
+    });
 
     var watches = [];
 
@@ -36,7 +40,7 @@ angular.module('openshiftConsole')
         project: resp[0],
         projectPromise: resp[1].projectPromise
       });
-      DataService.get("replicationcontrollers", $routeParams.deployment, $scope).then(
+      DataService.get("replicationcontrollers", $routeParams.deployment || $routeParams.replicationcontroller, $scope).then(
         // success
         function(deployment) {
           $scope.deployment = deployment;
@@ -56,20 +60,22 @@ angular.module('openshiftConsole')
         }
       );
 
-      DataService.get("deploymentconfigs", $routeParams.deploymentconfig, $scope).then(
-        // success
-        function(deploymentConfig) {
-          $scope.deploymentConfig = deploymentConfig;
-        },
-        // failure
-        function(e) {
-          $scope.alerts["load"] = {
-            type: "error",
-            message: "The deployment configuration details could not be loaded.",
-            details: e.data
-          };
-        }
-      );      
+      if ($routeParams.deploymentconfig) {
+        DataService.get("deploymentconfigs", $routeParams.deploymentconfig, $scope).then(
+          // success
+          function(deploymentConfig) {
+            $scope.deploymentConfig = deploymentConfig;
+          },
+          // failure
+          function(e) {
+            $scope.alerts["load"] = {
+              type: "error",
+              message: "The deployment configuration details could not be loaded.",
+              details: e.data
+            };
+          }
+        );      
+      }
 
       function extractPodTemplates() {
         angular.forEach($scope.deployments, function(deployment, deploymentId){
@@ -139,6 +145,7 @@ angular.module('openshiftConsole')
     $scope.deploymentIsLatest = DeploymentsService.deploymentIsLatest;
     $scope.deploymentIsInProgress = DeploymentsService.deploymentIsInProgress;
     $scope.deploymentStatus = DeploymentsService.deploymentStatus;
+    $scope.isDeployment = DeploymentsService.isDeployment;
 
     $scope.$on('$destroy', function(){
       DataService.unwatchAll(watches);

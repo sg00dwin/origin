@@ -115,6 +115,7 @@ angular.module('openshiftConsole')
     $scope.deploymentIsLatest = DeploymentsService.deploymentIsLatest;
     $scope.deploymentIsInProgress = DeploymentsService.deploymentIsInProgress;
     $scope.deploymentStatus = DeploymentsService.deploymentStatus;
+    $scope.isDeployment = DeploymentsService.isDeployment;
 
     $scope.$on('$destroy', function(){
       DataService.unwatchAll(watches);

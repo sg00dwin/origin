@@ -135,7 +135,10 @@ angular
       })      
       .when('/project/:project/browse/deployment/:deploymentconfig/:deployment', {
         templateUrl: 'views/browse/deployment.html'
-      })            
+      })      
+      .when('/project/:project/browse/replicationcontroller/:replicationcontroller', {
+        templateUrl: 'views/browse/deployment.html'
+      })                  
       .when('/project/:project/browse/events', {
         templateUrl: 'views/events.html'
       })
