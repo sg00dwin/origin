@@ -54,8 +54,8 @@ angular.module('openshiftConsole')
         function(e) {
           $scope.alerts["load"] = {
             type: "error",
-            message: "The deployment details could not be loaded.",
-            details: e.data
+            message: $routeParams.deployment ? "The deployment details could not be loaded." : "The replication controller details could not be loaded.",
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );
@@ -71,7 +71,7 @@ angular.module('openshiftConsole')
             $scope.alerts["load"] = {
               type: "error",
               message: "The deployment configuration details could not be loaded.",
-              details: e.data
+              details: "Reason: " + $filter('getErrorDetails')(e)
             };
           }
         );      

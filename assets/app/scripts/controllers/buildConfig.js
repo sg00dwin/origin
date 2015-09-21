@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('BuildConfigController', function ($scope, $routeParams, DataService, project, BuildsService) {
+  .controller('BuildConfigController', function ($scope, $routeParams, DataService, project, BuildsService, $filter) {
     $scope.buildConfig = null;
     $scope.builds = {};
     $scope.alerts = {};
@@ -41,7 +41,7 @@ angular.module('openshiftConsole')
           $scope.alerts["load"] = {
             type: "error",
             message: "The build configuration details could not be loaded.",
-            details: e.data
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );

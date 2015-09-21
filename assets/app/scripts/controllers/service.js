@@ -8,14 +8,14 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ServiceController', function ($scope, $routeParams, DataService, project) {
+  .controller('ServiceController', function ($scope, $routeParams, DataService, project, $filter) {
     $scope.service = null;
     $scope.alerts = {};
     $scope.renderOptions = $scope.renderOptions || {};    
     $scope.renderOptions.hideFilterWidget = true;    
     $scope.breadcrumbs = [
       {
-        title: "Pods",
+        title: "Services",
         link: "project/" + $routeParams.project + "/browse/services"
       },
       {
@@ -38,7 +38,7 @@ angular.module('openshiftConsole')
           $scope.alerts["load"] = {
             type: "error",
             message: "The service details could not be loaded.",
-            details: e.data
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );

@@ -5,9 +5,6 @@
         <h1>Deployments</h1>
       </div>
       <alerts alerts="alerts"></alerts>
-      <div ng-if="(deploymentConfigs | hashSize) === 0 && (deploymentsByDeploymentConfig | hashSize) === 0">
-        <em>{{emptyMessage}}</em>
-      </div>
       <table class="table table-bordered" style="background: white;">
         <thead>
           <tr>
@@ -19,6 +16,7 @@
           </tr>
         </thead>
         <tbody>
+          <tr  ng-if="(deploymentConfigs | hashSize) === 0 && (deploymentsByDeploymentConfig | hashSize) === 0"><td colspan="5"><em>{{emptyMessage}}</em></td></tr>
           <!-- hidden tr to start the ng-repeat for the build config -->
           <tr ng-repeat-start="(deploymentConfigName, deploymentConfigDeployments) in deploymentsByDeploymentConfig" style="display: none;"></tr>
           <!-- Deployment config with no deployments-->

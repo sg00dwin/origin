@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ImageController', function ($scope, $routeParams, DataService, project) {
+  .controller('ImageController', function ($scope, $routeParams, DataService, project, $filter) {
     $scope.imageStream = null;
     $scope.alerts = {};
     $scope.renderOptions = $scope.renderOptions || {};    
@@ -38,7 +38,7 @@ angular.module('openshiftConsole')
           $scope.alerts["load"] = {
             type: "error",
             message: "The image stream details could not be loaded.",
-            details: e.data
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );

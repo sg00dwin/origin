@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('PodController', function ($scope, $routeParams, DataService, project) {
+  .controller('PodController', function ($scope, $routeParams, DataService, project, $filter) {
     $scope.pod = null;
     $scope.alerts = {};
     $scope.renderOptions = $scope.renderOptions || {};    
@@ -38,7 +38,7 @@ angular.module('openshiftConsole')
           $scope.alerts["load"] = {
             type: "error",
             message: "The pod details could not be loaded.",
-            details: e.data
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );

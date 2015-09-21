@@ -5,11 +5,6 @@
         <h1>Services</h1>
       </div>
       <alerts alerts="alerts"></alerts>
-      <div ng-if="(services | hashSize) == 0">
-        <div>
-          <em>{{emptyMessage}}</em>
-        </div>
-      </div>
       <table class="table table-bordered" style="background: white;">
         <thead>
           <tr>
@@ -22,6 +17,7 @@
           </tr>
         </thead>
         <tbody>
+          <tr ng-if="(services | hashSize) == 0"><td colspan="6"><em>{{emptyMessage}}</em></td></tr>
           <tr ng-repeat="service in services | orderObjectsByDate : true">
             <td><a href="project/{{projectName}}/browse/service/{{service.metadata.name}}">{{service.metadata.name}}</a></td>
             <td>{{service.spec.clusterIP}}</td>

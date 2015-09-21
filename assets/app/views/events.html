@@ -5,12 +5,7 @@
         <h1>Events</h1>
       </div>
       <alerts alerts="alerts"></alerts>
-      <div ng-if="(events | hashSize) === 0">
-        <div>
-          <em>{{emptyMessage}}</em>
-        </div>
-      </div>
-      <table ng-if="(events | hashSize) !== 0" class="table table-bordered table-condensed table-events">
+      <table class="table table-bordered table-condensed table-events">
         <thead>
           <tr>
             <th>Time</th>
@@ -20,6 +15,9 @@
             <th><span class="hidden-xs-inline visible-sm-inline visible-md-inline hidden-lg-inline">Reason and </span>Message</th>
           </tr>
         </thead>
+        <tbody ng-if="(events | hashSize) === 0">
+          <tr><td colspan="5"><em>{{emptyMessage}}</em></td></tr>
+        </tbody>
         <tbody ng-repeat="event in events | toArray | orderBy:'-lastTimestamp'">
           <tr>
             <td data-title="Time" class="nowrap">{{event.lastTimestamp | date:'mediumTime'}}</td>

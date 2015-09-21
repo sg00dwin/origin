@@ -5,11 +5,6 @@
         <h1>Image Streams</h1>
       </div>
       <alerts alerts="alerts"></alerts>
-      <div ng-if="(imageStreams | hashSize) == 0">
-        <div>
-          <em>{{emptyMessage}}</em>
-        </div>
-      </div>
       <table class="table table-bordered" style="background: white;">
         <thead>
           <tr>
@@ -20,6 +15,7 @@
           </tr>
         </thead>
         <tbody>
+          <tr ng-if="(imageStreams | hashSize) == 0"><td colspan="4"><em>{{emptyMessage}}</em></td></tr>
           <tr ng-repeat="imageStream in imageStreams | orderObjectsByDate : true">
             <td><a href="project/{{projectName}}/browse/image/{{imageStream.metadata.name}}">{{imageStream.metadata.name}}</a></td>
             <td>

@@ -5,11 +5,6 @@
         <h1>Builds</h1>
       </div>
       <alerts alerts="alerts"></alerts>
-      <div ng-if="(builds | hashSize) == 0 && (buildConfigs | hashSize) == 0">
-        <div>
-          <em>{{emptyMessage}}</em>
-        </div>
-      </div>
       <!-- TODO probably move empty message -->
       <table class="table table-bordered" style="background: white;">
         <thead>
@@ -23,6 +18,7 @@
           </tr>
         </thead>
         <tbody>
+          <tr ng-if="(builds | hashSize) == 0 && (buildConfigs | hashSize) == 0"><td colspan="6"><em>{{emptyMessage}}</em></td></tr>
           <!-- hidden tr to start the ng-repeat for the build config -->
           <tr ng-repeat-start="(buildConfigName, buildConfigBuilds) in buildsByBuildConfig" style="display: none;"></tr>
           <!-- Build config with no builds-->

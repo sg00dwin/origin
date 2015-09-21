@@ -49,8 +49,8 @@ angular.module('openshiftConsole')
         function(e) {
           $scope.alerts["load"] = {
             type: "error",
-            message: "The build configuration details could not be loaded.",
-            details: e.data
+            message: "The build details could not be loaded.",
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );

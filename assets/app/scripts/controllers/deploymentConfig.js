@@ -42,7 +42,7 @@ angular.module('openshiftConsole')
           $scope.alerts["load"] = {
             type: "error",
             message: "The deployment configuration details could not be loaded.",
-            details: e.data
+            details: "Reason: " + $filter('getErrorDetails')(e)
           };
         }
       );
