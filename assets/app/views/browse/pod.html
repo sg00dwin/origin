@@ -1,7 +1,8 @@
 <div ng-controller="PodController">
   <project-page>
     <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
-    <div class="pod-well tile">
+    <alerts alerts="alerts"></alerts>
+    <div class="pod-well tile" ng-if="pod">
       <div class="row">
         <div class="col-md-6">
             <div class="pod-detail">

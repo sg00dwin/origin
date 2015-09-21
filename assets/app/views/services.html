@@ -43,6 +43,11 @@
           </tr>
         </tbody>
       </table>
+
+      <div ng-if="routesByService['']" style="margin-bottom: 10px;">
+        <h3>No Service</h3>
+        <div>Routes: <span ng-repeat="(routeName, route) in routesByService['']">{{route.host}}<span ng-show="!$last">, </span></span></div>
+      </div>      
     </div>
   </project-page>
 </div>
