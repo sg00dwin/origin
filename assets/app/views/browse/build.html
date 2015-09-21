@@ -50,7 +50,7 @@
         </div><!-- .col -->
         <div class="col-md-6">
           <div class="build-detail" ng-if="buildConfig.spec.strategy.type != build.spec.strategy.type">
-            <span class="build-detail-label">Build configuration:</span><a href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfigName}}">{{buildConfigName}}</a>
+            <span class="build-detail-label">Build configuration:</span><a href="project/{{build.metadata.namespace}}/browse/build/{{buildConfigName}}">{{buildConfigName}}</a>
           </div>        
           <div class="build-detail" ng-if="buildConfig.spec.strategy.type != build.spec.strategy.type">
             <span class="build-detail-label">Build strategy:</span>{{build.spec.strategy.type}}

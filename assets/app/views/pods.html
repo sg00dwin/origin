@@ -22,7 +22,7 @@
         </thead>
         <tbody>
           <tr ng-repeat="pod in pods | orderObjectsByDate : true">
-            <td><a href="project/{{projectName}}/browse/pods/{{pod.metadata.name}}">{{pod.metadata.name}}</a></td>
+            <td><a href="project/{{projectName}}/browse/pod/{{pod.metadata.name}}">{{pod.metadata.name}}</a></td>
             <td>
               <span ng-switch="pod.status.phase">
                 <span ng-switch-when="Succeeded" class="fa fa-check text-success" aria-hidden="true"></span>
@@ -33,7 +33,7 @@
               </span>
               <span>{{pod.status.phase}}</span>
             </td>
-            <td>{{pod | numContainersReady}}/{{pod.status.containerStatuses.length}}</td>            
+            <td>{{pod | numContainersReady}}/{{pod.spec.containers.length}}</td>            
             <td>{{pod | numContainerRestarts}}</td>
             <td><relative-timestamp timestamp="pod.metadata.creationTimestamp" drop-suffix="true"></relative-timestamp></td>
           </tr>

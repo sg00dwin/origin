@@ -147,10 +147,10 @@
             <td>
               <!-- Build number and link -->
               <span ng-if="build | annotation : 'buildNumber'">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfig.metadata.name}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfig.metadata.name}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
               </span>
               <span ng-if="!(build | annotation : 'buildNumber')">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfig.metadata.name}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfig.metadata.name}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
               </span>
             </td>
             <td>

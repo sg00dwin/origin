@@ -93,10 +93,10 @@
             <td>
               <!-- Deployment number and link -->
               <span ng-if="deployment | annotation : 'deploymentVersion'">
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
               </span>
               <span ng-if="!(deployment | annotation : 'deploymentVersion')">
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployments/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
+                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfig.metadata.name}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
               </span>
             </td>
             <td>

@@ -121,19 +121,19 @@ angular
       .when('/project/:project/browse/builds', {
         templateUrl: 'views/builds.html'
       })
-      .when('/project/:project/browse/builds/:buildconfig', {
+      .when('/project/:project/browse/build/:buildconfig', {
         templateUrl: 'views/browse/build-config.html'
       })
-      .when('/project/:project/browse/builds/:buildconfig/:build', {
+      .when('/project/:project/browse/build/:buildconfig/:build', {
         templateUrl: 'views/browse/build.html'
       })
       .when('/project/:project/browse/deployments', {
         templateUrl: 'views/deployments.html'
       })
-      .when('/project/:project/browse/deployments/:deploymentconfig', {
+      .when('/project/:project/browse/deployment/:deploymentconfig', {
         templateUrl: 'views/browse/deployment-config.html'
       })      
-      .when('/project/:project/browse/deployments/:deploymentconfig/:deployment', {
+      .when('/project/:project/browse/deployment/:deploymentconfig/:deployment', {
         templateUrl: 'views/browse/deployment.html'
       })            
       .when('/project/:project/browse/events', {
@@ -142,19 +142,19 @@ angular
       .when('/project/:project/browse/images', {
         templateUrl: 'views/images.html'
       })
-      .when('/project/:project/browse/images/:image', {
+      .when('/project/:project/browse/image/:image', {
         templateUrl: 'views/browse/image.html'
       })      
       .when('/project/:project/browse/pods', {
         templateUrl: 'views/pods.html'
       })
-      .when('/project/:project/browse/pods/:pod', {
+      .when('/project/:project/browse/pod/:pod', {
         templateUrl: 'views/browse/pod.html'
       })      
       .when('/project/:project/browse/services', {
         templateUrl: 'views/services.html'
       })
-      .when('/project/:project/browse/services/:service', {
+      .when('/project/:project/browse/service/:service', {
         templateUrl: 'views/browse/service.html'
       })      
       .when('/project/:project/catalog/templates', {

@@ -22,7 +22,7 @@ angular.module('openshiftConsole')
       },
       {
         title: $routeParams.deploymentconfig,
-        link: "project/" + $routeParams.project + "/browse/deployments/" + $routeParams.deploymentconfig
+        link: "project/" + $routeParams.project + "/browse/deployment/" + $routeParams.deploymentconfig
       },      
       {
         title: $routeParams.deployment

@@ -29,7 +29,7 @@
           <tr ng-repeat="build in buildConfigBuilds | orderObjectsByDate : true" ng-if="$first || expandedBuildConfigRow[buildConfigName]">
             <td>
               <span ng-if="$first">
-                <a ng-if="buildConfigs[buildConfigName]" href="project/{{projectName}}/browse/builds/{{buildConfigName}}">{{buildConfigName}}</a>
+                <a ng-if="buildConfigs[buildConfigName]" href="project/{{projectName}}/browse/build/{{buildConfigName}}">{{buildConfigName}}</a>
                 <span ng-if="!buildConfigs[buildConfigName]">
                   {{buildConfigName}}
                   <span class="pficon-layered" data-toggle="tooltip" data-placement="right" title="This build config no longer exists" style="cursor: help;">
@@ -42,10 +42,10 @@
             <td>
               <!-- Build number and link -->
               <span ng-if="build | annotation : 'buildNumber'">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfigName}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfigName}}/{{build.metadata.name}}">#{{build | annotation : 'buildNumber'}}</a>
               </span>
               <span ng-if="!(build | annotation : 'buildNumber')">
-                <a ng-href="project/{{build.metadata.namespace}}/browse/builds/{{buildConfigName}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
+                <a ng-href="project/{{build.metadata.namespace}}/browse/build/{{buildConfigName}}/{{build.metadata.name}}">{{build.metadata.name}}</a>
               </span>
               <!-- Build status -->
               <span ng-switch="build.status.phase" class="hide-ng-leave" style="margin-left: 5px;">
