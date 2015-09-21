@@ -39,8 +39,7 @@ angular.module('openshiftConsole')
       extractPodTemplates();
       ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
       $scope.emptyMessage = "No deployments to show";
-      $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments);
-      console.log($scope.deploymentsByDeploymentConfig);
+      $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments, $scope.deploymentConfigs);
       updateFilterWarning();
 
       var deploymentConfigName;
@@ -81,6 +80,7 @@ angular.module('openshiftConsole')
 
     watches.push(DataService.watch("deploymentconfigs", $scope, function(deploymentConfigs) {
       $scope.deploymentConfigs = deploymentConfigs.by("metadata.name");
+      $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments, $scope.deploymentConfigs);      
       Logger.log("deploymentconfigs (subscribe)", $scope.deploymentConfigs);
     }));
 

@@ -25,7 +25,18 @@
         <tbody>
           <!-- hidden tr to start the ng-repeat for the build config -->
           <tr ng-repeat-start="(buildConfigName, buildConfigBuilds) in buildsByBuildConfig" style="display: none;"></tr>
-          <!-- TODO handle no builds for a build config -->
+          <!-- Build config with no builds-->
+          <tr ng-if="(buildConfigBuilds | hashSize) == 0">
+            <td>
+              <a href="project/{{projectName}}/browse/builds/{{buildConfigName}}">{{buildConfigName}}</a>
+            </td>
+            <td><em>No builds for this configuration</em></td>
+            <td>&nbsp;</td>
+            <td>{{buildConfigs[buildConfigName].spec.strategy.type}}</td>
+            <td><span ng-if="buildConfigs[buildConfigName].spec.source.type == 'Git'" ng-bind-html='buildConfigs[buildConfigName].spec.source.git.uri | githubLink | linky'></span></td>
+            <td>&nbsp;</td>
+          </tr>
+          <!-- Build config with builds, or builds whose build config has since been deleted -->
           <tr ng-repeat="build in buildConfigBuilds | orderObjectsByDate : true" ng-if="$first || expandedBuildConfigRow[buildConfigName]">
             <td>
               <span ng-if="$first">

@@ -66,6 +66,7 @@ angular.module('openshiftConsole')
 
     watches.push(DataService.watch("buildconfigs", $scope, function(buildConfigs) {
       $scope.buildConfigs = buildConfigs.by("metadata.name");
+      associateBuildsToBuildConfig();
       Logger.log("buildconfigs (subscribe)", $scope.buildConfigs);
     }));
 
@@ -78,6 +79,10 @@ angular.module('openshiftConsole')
         }
         $scope.buildsByBuildConfig[buildConfigName] = $scope.buildsByBuildConfig[buildConfigName] || {};
         $scope.buildsByBuildConfig[buildConfigName][buildName] = build;
+      });
+      // Make sure there is an empty hash for every build config we know about
+      angular.forEach($scope.buildConfigs, function(buildConfig, buildConfigName){
+        $scope.buildsByBuildConfig[buildConfigName] = $scope.buildsByBuildConfig[buildConfigName] || {};
       });
     }
 

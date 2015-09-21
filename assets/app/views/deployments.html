@@ -21,7 +21,16 @@
         <tbody>
           <!-- hidden tr to start the ng-repeat for the build config -->
           <tr ng-repeat-start="(deploymentConfigName, deploymentConfigDeployments) in deploymentsByDeploymentConfig" style="display: none;"></tr>
-          <!-- TODO handle no deployment for a deployment config -->
+          <!-- Deployment config with no deployments-->
+          <tr ng-if="(deploymentConfigDeployments | hashSize) == 0">
+            <td>
+              <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployment/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
+            </td>
+            <td><em>No deployments for this configuration</em></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <!-- Deployment config with deployments, or deployments from a deployment config which has since been deleted -->
           <tr ng-repeat="deployment in deploymentConfigDeployments | orderObjectsByDate : true" ng-if="deploymentConfigName != '' && ($first || expandedDeploymentConfigRow[deploymentConfigName])">
             <td>
               <span ng-if="$first || deploymentConfigName == ''">

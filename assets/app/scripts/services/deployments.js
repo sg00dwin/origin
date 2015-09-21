@@ -222,13 +222,18 @@ angular.module("openshiftConsole")
       return ($filter('annotation')(deployment, 'deploymentConfig')) ? true : false;
     };
 
-    DeploymentsService.prototype.associateDeploymentsToDeploymentConfig = function(deployments) {
+    //deploymentConfigs is optional
+    DeploymentsService.prototype.associateDeploymentsToDeploymentConfig = function(deployments, deploymentConfigs) {
       var deploymentsByDeploymentConfig = {};
       angular.forEach(deployments, function(deployment, deploymentName) {
         var deploymentConfigName = $filter('annotation')(deployment, 'deploymentConfig');
         deploymentConfigName = deploymentConfigName || '';
         deploymentsByDeploymentConfig[deploymentConfigName] = deploymentsByDeploymentConfig[deploymentConfigName] || {};
         deploymentsByDeploymentConfig[deploymentConfigName][deploymentName] = deployment;
+      });
+      // Make sure there is an empty map for every dc we know about even if there is no deployment currently
+      angular.forEach(deploymentConfigs, function(deploymentConfig, deploymentConfigName) {
+        deploymentsByDeploymentConfig[deploymentConfigName] = deploymentsByDeploymentConfig[deploymentConfigName] || {};
       });
       return deploymentsByDeploymentConfig;
     };
