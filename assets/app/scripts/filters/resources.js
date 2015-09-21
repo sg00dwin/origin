@@ -133,6 +133,22 @@ angular.module('openshiftConsole')
       return imageTags.split(/\s*,\s*/);
     };
   })
+  .filter('imageStreamLastUpdated', function() {
+    return function(imageStream) {
+      var lastUpdated = imageStream.metadata.creationTimestamp;
+      var lastUpdatedMoment = moment(lastUpdated);
+      angular.forEach(imageStream.status.tags, function(tag) {
+        if (tag.items && tag.items.length > 0) {
+          var tagUpdatedMoment = moment(tag.items[0].created);
+          if (tagUpdatedMoment.isAfter(lastUpdatedMoment)) {
+            lastUpdatedMoment = tagUpdatedMoment;
+            lastUpdated = tag.items[0].created;
+          }
+        }
+      });
+      return lastUpdated;
+    }
+  })
   .filter('label', function() {
     return function(resource, key) {
       if (resource && resource.metadata && resource.metadata.labels) {
