@@ -60,9 +60,9 @@
         <div>Container Statuses:</div>
         <div ng-if="!pod.status.containerStatuses"><em>none</em></div>
         <dl ng-repeat="containerStatus in pod.status.containerStatuses | orderBy:'name'" class="dl-horizontal left indent">
-          <dt>Name</dt>
+          <dt>Name:</dt>
           <dd>{{containerStatus.name}}</dd>
-          <dt>State</dt>
+          <dt>State:</dt>
           <dd>
             <kubernetes-object-describe-container-state container-state="containerStatus.state"></container-state>
           </dd>
@@ -70,9 +70,9 @@
           <dd ng-if="!(containerStatus.lastState | isEmptyObj)">
             <kubernetes-object-describe-container-state container-state="containerStatus.lastState"></container-state>
           </dd>
-          <dt>Ready</dt>
+          <dt>Ready:</dt>
           <dd>{{containerStatus.ready}}</dd>
-          <dt>Restart Count</dt>
+          <dt>Restart Count:</dt>
           <dd>{{containerStatus.restartCount}}</dd>
         </dl>
       </div><!-- /row -->
