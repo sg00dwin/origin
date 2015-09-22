@@ -66,9 +66,13 @@
             color: inherit;
             &:hover, &:focus {
               background-color: @sidebar-os-hover-bg;
+              color: #000;
+              .fa {
+                color: @sidebar-os-active;
+              }
             }
             .fa {
-              color: lighten(@navbar-os-project-menu-color, 50%);
+              color: lighten(@navbar-os-project-menu-color, 25%);
             }
           }
           &.active {
@@ -169,6 +173,15 @@
           bottom: 0;
           left:0;
           margin-bottom: 0;
+          // Primary nav hover menu
+          .dropdown-menu {
+            box-shadow: 0;
+            left: 100%;
+            margin: -1px 0 0;
+            position: absolute;
+            top: 0;
+            min-width: 230px;
+          }
           .sidebar-header {
             display: none;
           }
