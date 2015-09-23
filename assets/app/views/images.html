@@ -22,14 +22,12 @@
               <span ng-if="!imageStream.status.dockerImageRepository && !imageStream.spec.dockerImageRepository"><em>unknown</em></span>
               <span ng-if="imageStream.status.dockerImageRepository || imageStream.spec.dockerImageRepository">{{imageStream.status.dockerImageRepository || imageStream.spec.dockerImageRepository}}</span>
             </td>
-            <!-- TODO only show X tags and have the rest in a popup? -->
             <td>
               <span ng-if="!imageStream.status.tags.length"><em>none</em></span>
-              <span ng-repeat="tag in imageStream.status.tags | limitTo: 4">{{tag.tag}}<span ng-if="!$last">, </span></span>
-              <!-- If it's exactly 5, just show the last -->
-              <span ng-if="imageStream.status.tags.length === 5">, {{imageStream.status.tags[4].tag}}</span>
-              <!-- The others are visible on the service page. -->
-              <span ng-if="imageStream.status.tags.length > 5">, and {{imageStream.status.tags.length - 4}} others</span>
+              <span ng-repeat="tag in imageStream.status.tags | limitTo: 4">{{tag.tag}}<span ng-if="!$last">,
+              </span></span><span ng-if="imageStream.status.tags.length === 5">,
+                {{imageStream.status.tags[4].tag}}</span><span ng-if="imageStream.status.tags.length > 5">,
+                and {{imageStream.status.tags.length - 4}} others</span>
             </td>
             <td><relative-timestamp timestamp="imageStream | imageStreamLastUpdated"></relative-timestamp></td>
           </tr>
