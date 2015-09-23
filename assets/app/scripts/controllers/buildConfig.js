@@ -89,7 +89,9 @@ angular.module('openshiftConsole')
           // After the build ends remove him from the buildConfigBuildsInProgress structure.
           var buildStatus = build.status.phase;
           if (buildStatus === "Complete" || buildStatus === "Failed" || buildStatus === "Error" || buildStatus === "Cancelled"){
-            delete $scope.buildConfigBuildsInProgress[buildConfigName][buildName];
+            if ($scope.buildConfigBuildsInProgress[buildConfigName]) {
+              delete $scope.buildConfigBuildsInProgress[buildConfigName][buildName];
+            }
           }
         }        
       }));
