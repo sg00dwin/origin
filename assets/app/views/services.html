@@ -23,13 +23,19 @@
             <td>{{service.spec.clusterIP}}</td>
             <td>
               <span ng-if="!service.status.loadBalancer.ingress.length"><em>none</em></span>
-              <span ng-if="service.status.loadBalancer.ingress.length">{{service.status.loadBalancer.ingress[0].ip}}</span>     
-              <!-- TODO, show all? hover? -->
+              <span ng-repeat="ingress in service.status.loadBalancer.ingress | limitTo: 4">{{ingress.ip}}<span ng-if="!$last">, </span></span>
+              <!-- If it's exactly 5, just show the last -->
+              <span ng-if="service.status.loadBalancer.ingress.length === 5">, {{service.status.loadBalancer.ingress[4].ip}}</span>
+              <!-- The others are visible on the service page. -->
+              <span ng-if="service.status.loadBalancer.ingress.length > 5">, and {{service.status.loadBalancer.ingress.length - 4}} others</span>
             </td>
             <td>
               <span ng-if="!service.spec.ports.length"><em>none</em></span>
-              <span ng-if="service.spec.ports.length">{{service.spec.ports[0].port}} ({{service.spec.ports[0].protocol}})</span>
-              <!-- TODO, show all? hover? -->
+              <span ng-repeat="portMapping in service.spec.ports | limitTo: 4">{{portMapping.port}} ({{portMapping.protocol}})<span ng-if="!$last">, </span></span>
+              <!-- If it's exactly 5, just show the last -->
+              <span ng-if="service.spec.ports.length === 5">, {{service.spec.ports[4].port}} ({{service.spec.ports[4].protocol}})</span>
+              <!-- The others are visible on the service page. -->
+              <span ng-if="service.spec.ports.length > 5">, and {{service.spec.ports.length - 4}} others</span>
             </td>
             <td>
               <span ng-if="!service.spec.selector"><em>none</em></span>
