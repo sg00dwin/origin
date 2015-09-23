@@ -14,11 +14,6 @@ angular.module('openshiftConsole')
     // leave undefined so we know when data is loaded
     $scope.deploymentConfigs = undefined;
     $scope.deploymentsByDeploymentConfig = {};
-    $scope.podTemplates = {};
-    $scope.imageStreams = {};
-    $scope.imagesByDockerReference = {};
-    $scope.imageStreamImageRefByDockerReference = {}; // lets us determine if a particular container's docker image reference belongs to an imageStream
-    $scope.builds = {};
     $scope.labelSuggestions = {};
     $scope.alerts = $scope.alerts || {};
     $scope.emptyMessage = "Loading...";
@@ -36,8 +31,6 @@ angular.module('openshiftConsole')
       LabelFilter.addLabelSuggestionsFromResources($scope.unfilteredDeployments, $scope.labelSuggestions);
       LabelFilter.setLabelSuggestions($scope.labelSuggestions);
       $scope.deployments = LabelFilter.getLabelSelector().select($scope.unfilteredDeployments);
-      extractPodTemplates();
-      ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
       $scope.emptyMessage = "No deployments to show";
       $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments, $scope.deploymentConfigs);
       updateFilterWarning();
@@ -84,19 +77,6 @@ angular.module('openshiftConsole')
       Logger.log("deploymentconfigs (subscribe)", $scope.deploymentConfigs);
     }));
 
-    // Sets up subscription for imageStreams
-    watches.push(DataService.watch("imagestreams", $scope, function(imageStreams) {
-      $scope.imageStreams = imageStreams.by("metadata.name");
-      ImageStreamResolver.buildDockerRefMapForImageStreams($scope.imageStreams, $scope.imageStreamImageRefByDockerReference);
-      ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
-      Logger.log("imagestreams (subscribe)", $scope.imageStreams);
-    }));
-
-    watches.push(DataService.watch("builds", $scope, function(builds) {
-      $scope.builds = builds.by("metadata.name");
-      Logger.log("builds (subscribe)", $scope.builds);
-    }));
-
     function updateFilterWarning() {
       if (!LabelFilter.getLabelSelector().isEmpty() && $.isEmptyObject($scope.deployments) && !$.isEmptyObject($scope.unfilteredDeployments)) {
         $scope.alerts["deployments"] = {
@@ -108,22 +88,6 @@ angular.module('openshiftConsole')
         delete $scope.alerts["deployments"];
       }
     }
-
-    $scope.startLatestDeployment = function(deploymentConfig) {
-      DeploymentsService.startLatestDeployment(deploymentConfig, $scope)
-    };
-
-    $scope.retryFailedDeployment = function(deployment) {
-      DeploymentsService.retryFailedDeployment(deployment, $scope);
-    };
-
-    $scope.rollbackToDeployment = function(deployment, changeScaleSettings, changeStrategy, changeTriggers) {
-      DeploymentsService.rollbackToDeployment(deployment, changeScaleSettings, changeStrategy, changeTriggers, $scope);
-    };
-
-    $scope.cancelRunningDeployment = function(deployment) {
-      DeploymentsService.cancelRunningDeployment(deployment, $scope);
-    };
 
     $scope.deploymentIsLatest = DeploymentsService.deploymentIsLatest;
     $scope.deploymentIsInProgress = DeploymentsService.deploymentIsInProgress;

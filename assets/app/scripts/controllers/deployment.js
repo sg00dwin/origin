@@ -13,6 +13,10 @@ angular.module('openshiftConsole')
     $scope.deploymentConfig = null;
     $scope.deployments = {};
     $scope.podTemplates = {};
+    $scope.imageStreams = {};
+    $scope.imagesByDockerReference = {};
+    $scope.imageStreamImageRefByDockerReference = {}; // lets us determine if a particular container's docker image reference belongs to an imageStream
+    $scope.builds = {};     
     $scope.alerts = {};
     $scope.renderOptions = $scope.renderOptions || {};    
     $scope.renderOptions.hideFilterWidget = true;    
@@ -98,8 +102,7 @@ angular.module('openshiftConsole')
       watches.push(DataService.watch("replicationcontrollers", $scope, function(deployments, action, deployment) {
         $scope.deployments = deployments.by("metadata.name");
         extractPodTemplates();
-        // TODO do we want image stuff at all
-        //ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
+        ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
         $scope.emptyMessage = "No deployments to show";
         $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments);
 
@@ -135,6 +138,19 @@ angular.module('openshiftConsole')
             deployment.causes = $filter('deploymentCauses')(deployment);
           });
         }        
+      }));
+
+      // Sets up subscription for imageStreams
+      watches.push(DataService.watch("imagestreams", $scope, function(imageStreams) {
+        $scope.imageStreams = imageStreams.by("metadata.name");
+        ImageStreamResolver.buildDockerRefMapForImageStreams($scope.imageStreams, $scope.imageStreamImageRefByDockerReference);
+        ImageStreamResolver.fetchReferencedImageStreamImages($scope.podTemplates, $scope.imagesByDockerReference, $scope.imageStreamImageRefByDockerReference, $scope);
+        Logger.log("imagestreams (subscribe)", $scope.imageStreams);
+      }));
+
+      watches.push(DataService.watch("builds", $scope, function(builds) {
+        $scope.builds = builds.by("metadata.name");
+        Logger.log("builds (subscribe)", $scope.builds);
       }));
     });
 
