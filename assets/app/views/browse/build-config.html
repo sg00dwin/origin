@@ -1,4 +1,4 @@
-<div ng-controller="BuildConfigController">
+<div ng-controller="BuildConfigController" class="content">
   <project-page>
     <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
     <alerts alerts="alerts"></alerts>
@@ -135,14 +135,14 @@
           </dl>
         </div>
       </div>
-
-      <table class="table table-bordered" style="background: white;">
+    </div><!-- /buildConfig .tile -->
+    <div class="table-reponsive">
+      <table class="table table-bordered table-hover">
         <thead>
           <tr>
             <th>Build</th>
             <th>Status</th>
             <th>Started</th>
-            <th><span class="sr-only">Action</span>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -158,41 +158,41 @@
               </span>
             </td>
             <td>
-              <!-- Build status -->
-              <span ng-switch="build.status.phase" class="hide-ng-leave">
-                <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
-                <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
-                <span ng-switch-when="Error" class="fa fa-times text-danger" aria-hidden="true"></span>
-                <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>
-                <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
-                <span ng-switch-default class="fa fa-refresh fa-spin" aria-hidden="true"></span>
-              </span>
-              <span>{{build.status.phase}}</span>
-              <!-- Build duration -->
-              <span ng-switch="build.status.phase" class="hide-ng-leave">
-                <span ng-switch-when="Complete"> in {{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>
-                <span ng-switch-when="Failed">after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
-                <span ng-switch-when="Cancelled"> after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>                  
-                <span ng-switch-when="Running"> for <duration-until-now timestamp="build.status.startTimestamp"></duration-until-now></span>
-                <span ng-switch-when="New">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
-                <span ng-switch-when="Pending">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
-                <span ng-switch-default>
-                  <span ng-if="build.status.startTimestamp"> in {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
-                  <span ng-if="!build.status.startTimestamp"> waited for {{build.metadata.creationTimestamp | duration : build.status.completionTimestamp}}</span>
+              <div row class="status">
+                <!-- Build status -->
+                <span ng-switch="build.status.phase" class="hide-ng-leave status-icon">
+                  <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
+                  <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
+                  <span ng-switch-when="Error" class="fa fa-times text-danger" aria-hidden="true"></span>
+                  <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>
+                  <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
+                  <span ng-switch-default class="fa fa-refresh" aria-hidden="true"></span>
                 </span>
-              </span>
+                <span flex>
+                  <span>{{build.status.phase}}</span>
+                  <!-- Build duration -->
+                  <span ng-switch="build.status.phase" class="hide-ng-leave">
+                    <span ng-switch-when="Complete"> in {{(build.status.startTimestamp || build.metadata.creationTimestamp) | duration : build.status.completionTimestamp}}</span>
+                    <span ng-switch-when="Failed">after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
+                    <span ng-switch-when="Cancelled"> after {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>                  
+                    <span ng-switch-when="Running"> for <duration-until-now timestamp="build.status.startTimestamp"></duration-until-now></span>
+                    <span ng-switch-when="New">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
+                    <span ng-switch-when="Pending">, waiting for <duration-until-now timestamp="build.metadata.creationTimestamp"></duration-until-now></span>
+                    <span ng-switch-default>
+                      <span ng-if="build.status.startTimestamp"> in {{build.status.startTimestamp | duration : build.status.completionTimestamp}}</span>
+                      <span ng-if="!build.status.startTimestamp"> waited for {{build.metadata.creationTimestamp | duration : build.status.completionTimestamp}}</span>
+                    </span>
+                  </span>
+                </span>
+              </div>
             </td>
             <td>
               <relative-timestamp timestamp="build.status.startTimestamp || build.metadata.creationTimestamp"></relative-timestamp>
               <span>- {{(build.status.startTimestamp || build.metadata.creationTimestamp) | date : 'short'}}</span>
             </td>
-            <td>
-              <button class="btn btn-default build-status-button btn-primary" ng-click="cancelBuild(build, buildConfig.metadata.name)" ng-if="build | isIncompleteBuild">Cancel</button>
-              <button class="btn btn-default build-status-button" ng-click="cloneBuild(build.metadata.name)" ng-hide="build | isIncompleteBuild" ng-disabled="(buildConfigBuildsInProgress[buildConfig.metadata.name] | hashSize) !== 0">Rebuild</button>            
-            </td>
           </tr>
         </tbody>
       </table>
-    </div><!-- /buildConfig .tile -->
+    </div>
   </project-page>
 </div>

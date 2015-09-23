@@ -5,98 +5,109 @@
         <h1>Deployments</h1>
       </div>
       <alerts alerts="alerts"></alerts>
-      <table class="table table-bordered" style="background: white;">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Trigger</th>
-            <th>&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr  ng-if="(deploymentConfigs | hashSize) === 0 && (deploymentsByDeploymentConfig | hashSize) === 0"><td colspan="5"><em>{{emptyMessage}}</em></td></tr>
-          <!-- hidden tr to start the ng-repeat for the build config -->
-          <tr ng-repeat-start="(deploymentConfigName, deploymentConfigDeployments) in deploymentsByDeploymentConfig" style="display: none;"></tr>
-          <!-- Deployment config with no deployments-->
-          <tr ng-if="(deploymentConfigDeployments | hashSize) == 0">
-            <td>
-              <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployment/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
-            </td>
-            <td><em>No deployments for this configuration</em></td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <!-- Deployment config with deployments, or deployments from a deployment config which has since been deleted -->
-          <tr ng-repeat="deployment in deploymentConfigDeployments | orderObjectsByDate : true" ng-if="deploymentConfigName != '' && ($first || expandedDeploymentConfigRow[deploymentConfigName])">
-            <td>
-              <span ng-if="$first || deploymentConfigName == ''">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Deployment Config</th>
+              <th>Deployment</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Trigger</th>
+              <th>History</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr  ng-if="(deploymentConfigs | hashSize) === 0 && (deploymentsByDeploymentConfig | hashSize) === 0"><td colspan="5"><em>{{emptyMessage}}</em></td></tr>
+            <!-- hidden tr to start the ng-repeat for the build config -->
+            <tr ng-repeat-start="(deploymentConfigName, deploymentConfigDeployments) in deploymentsByDeploymentConfig" style="display: none;"></tr>
+            <!-- Deployment config with no deployments-->
+            <tr ng-if="(deploymentConfigDeployments | hashSize) == 0">
+              <td>
                 <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployment/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
-                <span ng-if="!deploymentConfigs[deploymentConfigName] && deploymentConfigName != ''">
-                  {{deploymentConfigName}}
-                  <span class="pficon-layered" data-toggle="tooltip" data-placement="right" title="This deployment config no longer exists" style="cursor: help;">
-                    <span class="pficon pficon-warning-triangle"></span>
-                    <span class="pficon pficon-warning-exclamation"></span>
-                  </span>                    
-                </span>
-              </span>
-            </td>
-            <td>
-              <!-- Deployment number and link -->
-              <span ng-if="deployment | annotation : 'deploymentVersion'">
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfigName}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
-              </span>
-              <span ng-if="!(deployment | annotation : 'deploymentVersion')">
-                <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfigName}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
-              </span>
-              <!-- Deployment status -->
-              <span ng-switch="deploymentStatus(deployment)" class="hide-ng-leave">
-                <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>              
-                <span ng-switch-when="Deployed" class="fa fa-check text-success" aria-hidden="true"></span>
-                <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
-                <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
-                <span ng-switch-when="New" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
-                <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
-                <span ng-switch-default class="fa fa-refresh fa-spin" aria-hidden="true"></span>
-              </span>
-              {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, {{deployment.spec.replicas}}/{{deployment.status.replicas}} replicas</span>  
-              <!-- TODO would be nice to have the deploymentStatusReason in a popup, when there is one -->
-            </td>
-            <td>
-              <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
-              <span>- {{deployment.metadata.creationTimestamp | date : 'short'}}</span>            
-            </td>
-            <td>
-              <span ng-if="!deployment.causes.length">Unknown</span>
-              <span ng-if="deployment.causes.length">
-                <span ng-repeat="cause in deployment.causes">
-                  <span ng-switch="cause.type">
-                    <span ng-switch-when="ImageChange">
-                      <span ng-if="cause.imageTrigger.from">
-                        <abbr title="{{cause.imageTrigger.from | imageObjectRef : null : true}}">Image</abbr> change
-                      </span>
-                    </span>
-                    <span ng-switch-when="ConfigChange">Config change</span>
-                    <span ng-switch-default>{{cause.type}}</span>
+              </td>
+              <td><em>No deployments for this configuration</em></td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <!-- Deployment config with deployments, or deployments from a deployment config which has since been deleted -->
+            <tr ng-repeat="deployment in deploymentConfigDeployments | orderObjectsByDate : true" ng-if="deploymentConfigName != '' && ($first || expandedDeploymentConfigRow[deploymentConfigName])">
+              <td>
+                <span ng-if="$first || deploymentConfigName == ''">
+                  <a ng-if="deploymentConfigs[deploymentConfigName]" href="project/{{projectName}}/browse/deployment/{{deploymentConfigName}}">{{deploymentConfigName}}</a>
+                  <span ng-if="!deploymentConfigs[deploymentConfigName] && deploymentConfigName != ''">
+                    {{deploymentConfigName}}
+                    <span class="pficon-layered" data-toggle="tooltip" data-placement="right" title="This deployment config no longer exists" style="cursor: help;">
+                      <span class="pficon pficon-warning-triangle"></span>
+                      <span class="pficon pficon-warning-exclamation"></span>
+                    </span>                    
                   </span>
                 </span>
-              </span>              
-            </td>
-            <td>
-              <span ng-if="$first && !$last">
-                <a href="" ng-click="expandedDeploymentConfigRow[deploymentConfigName] = true" ng-if="!expandedDeploymentConfigRow[deploymentConfigName]">Deployment history</a>
-                <a href="" ng-click="expandedDeploymentConfigRow[deploymentConfigName] = false" ng-if="expandedDeploymentConfigRow[deploymentConfigName]">Hide history</a>              
-              </span>
-            </td>
-          </tr>
-          <tr ng-repeat-end style="display: none;"></tr> <!-- hidden tr to stop the ng-repeat for the build config -->
-        </tbody>
-      </table>
+              </td>
+              <td>
+                <!-- Deployment number and link -->
+                <span ng-if="deployment | annotation : 'deploymentVersion'">
+                  <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfigName}}/{{deployment.metadata.name}}">#{{deployment | annotation : 'deploymentVersion'}}</a>
+                </span>
+                <span ng-if="!(deployment | annotation : 'deploymentVersion')">
+                  <a ng-href="project/{{deployment.metadata.namespace}}/browse/deployment/{{deploymentConfigName}}/{{deployment.metadata.name}}">{{deployment.metadata.name}}</a>
+                </span>
+              </td>
+              <td>
+                <div row class="status">
+                <!-- Deployment status -->
+                  <span ng-switch="deploymentStatus(deployment)" class="hide-ng-leave status-icon">
+                    <span ng-switch-when="Cancelled" class="fa fa-ban text-warning" aria-hidden="true"></span>              
+                    <span ng-switch-when="Deployed" class="fa fa-check text-success" aria-hidden="true"></span>
+                    <span ng-switch-when="Complete" class="fa fa-check text-success" aria-hidden="true"></span>
+                    <span ng-switch-when="Failed" class="fa fa-times text-danger" aria-hidden="true"></span>
+                    <span ng-switch-when="New" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
+                    <span ng-switch-when="Pending" class="spinner spinner-xs spinner-inline" aria-hidden="true"></span>
+                    <span ng-switch-default class="fa fa-refresh" aria-hidden="true"></span>
+                  </span>
+                  <span flex>
+                  {{deploymentStatus(deployment)}}<span ng-if="deploymentStatus(deployment) == 'Deployed'">, {{deployment.spec.replicas}}/{{deployment.status.replicas}} replicas</span>
+                  </span>
+                </div>
+                <!-- TODO would be nice to have the deploymentStatusReason in a popup, when there is one -->
+              </td>
+              <td>
+                <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
+                <span>- {{deployment.metadata.creationTimestamp | date : 'short'}}</span>            
+              </td>
+              <td>
+                <span ng-if="!deployment.causes.length">Unknown</span>
+                <span ng-if="deployment.causes.length">
+                  <span ng-repeat="cause in deployment.causes">
+                    <span ng-switch="cause.type">
+                      <span ng-switch-when="ImageChange">
+                        <span ng-if="cause.imageTrigger.from">
+                          <abbr title="{{cause.imageTrigger.from | imageObjectRef : null : true}}">Image</abbr> change
+                        </span>
+                      </span>
+                      <span ng-switch-when="ConfigChange">Config change</span>
+                      <span ng-switch-default>{{cause.type}}</span>
+                    </span>
+                  </span>
+                </span>              
+              </td>
+              <td>
+                <span ng-if="$first && !$last">
+                  <a href="" ng-click="expandedDeploymentConfigRow[deploymentConfigName] = true" ng-if="!expandedDeploymentConfigRow[deploymentConfigName]">Show</a>
+                  <a href="" ng-click="expandedDeploymentConfigRow[deploymentConfigName] = false" ng-if="expandedDeploymentConfigRow[deploymentConfigName]">Hide</a>              
+                </span>
+              </td>
+            </tr>
+            <tr ng-repeat-end style="display: none;"></tr> <!-- hidden tr to stop the ng-repeat for the build config -->
+          </tbody>
+        </table>
+      </div>
 
       <div ng-if="(deploymentsByDeploymentConfig[''] | hashSize) > 0">
         <h3>Other replication controllers</h3>
-        <table class="table table-bordered" style="background: white;">
+        <table class="table table-bordered">
           <thead>
             <tr>
               <th>Name</th>
