@@ -41,7 +41,7 @@ angular.module("openshiftConsole")
     };
 
     DeploymentsService.prototype.retryFailedDeployment = function(deployment, $scope) {
-      var req = deployment;
+      var req = angular.copy(deployment);
       var deploymentName = deployment.metadata.name;
       var deploymentConfigName = $filter('annotation')(deployment, 'deploymentConfig');
       // TODO: we need a "retry" api endpoint so we don't have to do this manually
@@ -160,7 +160,7 @@ angular.module("openshiftConsole")
     DeploymentsService.prototype.cancelRunningDeployment = function(deployment, $scope) {
       var deploymentName = deployment.metadata.name;
       var deploymentConfigName = $filter('annotation')(deployment, 'deploymentConfig');        
-      var req = deployment;
+      var req = angular.copy(deployment);
 
       // TODO: we need a "cancel" api endpoint so we don't have to do this manually
 

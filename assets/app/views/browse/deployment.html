@@ -78,13 +78,13 @@
             <dd>
               {{deployment.status.replicas}} current / {{deployment.spec.replicas}} desired
             </dd>
-            <div class="deployment-detail">
-              <span>Pod template:</span>
-              <pod-template
-                pod-template="deployment.spec.template" 
-                images-by-docker-reference="imagesByDockerReference"
-                builds="builds"></pod-template>
-            </div>
+          </dl>
+          <div class="deployment-detail">
+            <span>Pod template:</span>
+            <pod-template
+              pod-template="deployment.spec.template"
+              images-by-docker-reference="imagesByDockerReference"
+              builds="builds"></pod-template>
           </div>
         </div><!-- .col -->
       </div>
