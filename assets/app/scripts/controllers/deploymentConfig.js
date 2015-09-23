@@ -130,7 +130,7 @@ angular.module('openshiftConsole')
     });
 
     $scope.startLatestDeployment = function(deploymentConfig) {
-      DeploymentsService.startLatestDeployment(deploymentConfig, $scope)
+      DeploymentsService.startLatestDeployment(deploymentConfig, $scope);
     };
 
     $scope.deploymentIsLatest = DeploymentsService.deploymentIsLatest;

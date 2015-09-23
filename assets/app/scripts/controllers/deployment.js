@@ -49,7 +49,7 @@ angular.module('openshiftConsole')
         // success
         function(deployment) {
           $scope.deployment = deployment;
-          var deploymentVersion = $filter("annotation")(deployment, "deploymentVersion")
+          var deploymentVersion = $filter("annotation")(deployment, "deploymentVersion");
           if (deploymentVersion) {
             $scope.breadcrumbs[2].title = "#" + deploymentVersion;
           }
@@ -155,7 +155,7 @@ angular.module('openshiftConsole')
     });
 
     $scope.startLatestDeployment = function(deploymentConfig) {
-      DeploymentsService.startLatestDeployment(deploymentConfig, $scope)
+      DeploymentsService.startLatestDeployment(deploymentConfig, $scope);
     };
 
     $scope.retryFailedDeployment = function(deployment) {

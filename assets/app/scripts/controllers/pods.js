@@ -8,7 +8,7 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('PodsController', function ($scope, DataService, $filter, LabelFilter, Logger, ImageStreamResolver) {
+  .controller('PodsController', function ($scope, DataService, $filter, LabelFilter, Logger) {
     $scope.pods = {};
     $scope.unfilteredPods = {};
     // TODO should we add links to the image streams the pod is using

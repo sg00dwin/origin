@@ -407,9 +407,10 @@ angular.module('openshiftConsole')
       this._watchOptions(resource, context, opts);
     }
 
+    var self = this;
+
     if (this._watchInFlight(resource, context) && this._resourceVersion(resource, context)) {
       if (callback) {
-        var self = this;
         $timeout(function() {
           callback(self._data(resource, context));
         }, 0);
@@ -419,7 +420,6 @@ angular.module('openshiftConsole')
       if (callback) {
         var existingData = this._data(resource, context);
         if (existingData) {
-          var self = this;
           $timeout(function() {          
             callback(existingData);
           }, 0);
@@ -466,7 +466,7 @@ angular.module('openshiftConsole')
       // If we were given a callback, add it
       this._watchObjectCallbacks(resource, name, context).add(callback);
       var self = this;
-      var wrapperCallback = function(items, event, item) {
+      wrapperCallback = function(items, event, item) {
         // If we got an event for a single item, only fire the callback if its the item we care about
         if (item && item.metadata.name === name) {
           self._watchObjectCallbacks(resource, name, context).fire(item, event);

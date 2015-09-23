@@ -147,7 +147,7 @@ angular.module('openshiftConsole')
         }
       });
       return lastUpdated;
-    }
+    };
   })
   .filter('label', function() {
     return function(resource, key) {

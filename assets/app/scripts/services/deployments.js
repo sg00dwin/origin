@@ -2,7 +2,7 @@
 
 angular.module("openshiftConsole")
   .factory("DeploymentsService", function(DataService, $filter){
-    function DeploymentsService() {};
+    function DeploymentsService() {}
 
     DeploymentsService.prototype.startLatestDeployment = function(deploymentConfig, $scope) {
       // increase latest version by one so starts new deployment based on latest
@@ -212,7 +212,7 @@ angular.module("openshiftConsole")
       }
       var status = $filter('annotation')(deployment, 'deploymentStatus');
       // If it is just an RC (non-deployment) or it is a deployment with more than 0 replicas
-      if (!this.isDeployment(deployment) || status == "Complete" && deployment.spec.replicas > 0) {
+      if (!this.isDeployment(deployment) || status === "Complete" && deployment.spec.replicas > 0) {
         return "Deployed";
       }
       return status;

@@ -41,7 +41,7 @@ angular.module('openshiftConsole')
         // success
         function(build) {
           $scope.build = build;
-          var buildNumber = $filter("annotation")(build, "buildNumber")
+          var buildNumber = $filter("annotation")(build, "buildNumber");
           if (buildNumber) {
             $scope.breadcrumbs[2].title = "#" + buildNumber;
           }

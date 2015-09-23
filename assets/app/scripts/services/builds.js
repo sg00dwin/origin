@@ -2,7 +2,7 @@
 
 angular.module("openshiftConsole")
   .factory("BuildsService", function(DataService, $filter){
-    function BuildsService() {};
+    function BuildsService() {}
 
     // Function which will 'instantiate' new build from given buildConfigName
     BuildsService.prototype.startBuild = function(buildConfigName, $scope) {

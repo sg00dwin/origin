@@ -20,12 +20,6 @@ angular.module('openshiftConsole')
     $scope.expandedDeploymentConfigRow = {};
     var watches = [];
 
-    function extractPodTemplates() {
-      angular.forEach($scope.deployments, function(deployment, deploymentId){
-        $scope.podTemplates[deploymentId] = deployment.spec.template;
-      });
-    }
-
     watches.push(DataService.watch("replicationcontrollers", $scope, function(deployments, action, deployment) {
       $scope.unfilteredDeployments = deployments.by("metadata.name");
       LabelFilter.addLabelSuggestionsFromResources($scope.unfilteredDeployments, $scope.labelSuggestions);
@@ -98,7 +92,7 @@ angular.module('openshiftConsole')
       // trigger a digest loop
       $scope.$apply(function() {
         $scope.deployments = labelSelector.select($scope.unfilteredDeployments);
-        associateDeploymentsToDeploymentConfig();
+        $scope.deploymentsByDeploymentConfig = DeploymentsService.associateDeploymentsToDeploymentConfig($scope.deployments, $scope.deploymentConfigs); 
         updateFilterWarning();
       });
     });
