@@ -27,6 +27,7 @@ angular.module('openshiftConsole')
     $scope.emptyMessage = "Loading...";
 
     var watches = [];
+    var objectWatches = [];
 
     project.get($routeParams.project).then(function(resp) {
       angular.extend($scope, {
@@ -37,6 +38,17 @@ angular.module('openshiftConsole')
         // success
         function(deploymentConfig) {
           $scope.deploymentConfig = deploymentConfig;
+
+          // If we found the item successfully, watch for changes on it
+          objectWatches.push(DataService.watchObject("deploymentconfigs", $routeParams.deploymentconfig, $scope, function(deploymentConfig, action) {
+            if (action === "DELETED") {
+              $scope.alerts["deleted"] = {
+                type: "warning",
+                message: "This deployment configuration has been deleted."
+              }; 
+            }
+            $scope.deploymentConfig = deploymentConfig;
+          }));          
         },
         // failure
         function(e) {
@@ -71,13 +83,13 @@ angular.module('openshiftConsole')
         if (!action) {
           // Loading of the page that will create deploymentConfigDeploymentsInProgress structure, which will associate running deployment to his deploymentConfig.
           $scope.deploymentConfigDeploymentsInProgress = DeploymentsService.associateRunningDeploymentToDeploymentConfig($scope.deploymentsByDeploymentConfig);
-        } else if (action === 'ADDED' || (action === 'MODIFIED' && ['New', 'Pending', 'Running'].indexOf(deploymentStatus(deployment)) > -1)) {
+        } else if (action === 'ADDED' || (action === 'MODIFIED' && ['New', 'Pending', 'Running'].indexOf(DeploymentsService.deploymentStatus(deployment)) > -1)) {
           // When new deployment id instantiated/cloned, or in case of a retry, associate him to his deploymentConfig and add him into deploymentConfigDeploymentsInProgress structure.
           $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName] = $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName] || {};
           $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName][deploymentName] = deployment;
         } else if (action === 'MODIFIED') {
           // After the deployment ends remove him from the deploymentConfigDeploymentsInProgress structure.
-          var status = deploymentStatus(deployment);
+          var status = DeploymentsService.deploymentStatus(deployment);
           if (status === "Complete" || status === "Failed"){
             delete $scope.deploymentConfigDeploymentsInProgress[deploymentConfigName][deploymentName];
           }
@@ -120,5 +132,6 @@ angular.module('openshiftConsole')
 
     $scope.$on('$destroy', function(){
       DataService.unwatchAll(watches);
+      DataService.unwatchAllObjects(objectWatches);
     });
   });

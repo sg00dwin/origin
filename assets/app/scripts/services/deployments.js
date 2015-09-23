@@ -21,21 +21,21 @@ angular.module("openshiftConsole")
       // update the deployment config
       DataService.update("deploymentconfigs", deploymentConfig.metadata.name, req, $scope).then(
         function() {
-            $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["deploy"] = 
             {
               type: "success",
               message: "Deployment #" + req.status.latestVersion + " of " + deploymentConfig.metadata.name + " has started.",
-            }
-          ];
+            };
         },
         function(result) {
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["deploy"] = 
             {
               type: "error",
               message: "An error occurred while starting the deployment.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };
@@ -57,13 +57,13 @@ angular.module("openshiftConsole")
                 Logger.info("Deployer pod " + pod.metadata.name + " deleted");
               },
               function(result) {
-                $scope.alerts = [
+                $scope.alerts = $scope.alerts || {};                
+                $scope.alerts["retrydeployer"] = 
                   {
                     type: "error",
                     message: "An error occurred while deleting the deployer pod.",
                     details: $filter('getErrorDetails')(result)
-                  }
-                ];
+                  };
               }
             );
           }
@@ -82,21 +82,21 @@ angular.module("openshiftConsole")
       // update the deployment
       DataService.update("replicationcontrollers", deploymentName, req, $scope).then(
         function() {
-            $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["retry"] = 
             {
               type: "success",
               message: "Retrying deployment " + deploymentName + " of " + deploymentConfigName + ".",
-            }
-          ];
+            };
         },
         function(result) {
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["retry"] = 
             {
               type: "error",
               message: "An error occurred while retrying the deployment.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };
@@ -127,32 +127,32 @@ angular.module("openshiftConsole")
           // update the deployment config based on the one returned by the rollback
           DataService.update("deploymentconfigs", deploymentConfigName, newDeploymentConfig, $scope).then(
             function(rolledBackDeploymentConfig) {
-                $scope.alerts = [
+              $scope.alerts = $scope.alerts || {};
+              $scope.alerts["rollback"] = 
                 {
                   type: "success",
                   message: "Deployment #" + rolledBackDeploymentConfig.status.latestVersion + " is rolling back " + deploymentConfigName + " to " + deploymentName + ".",
-                }
-              ];
+                };
             },
             function(result) {
-              $scope.alerts = [
+              $scope.alerts = $scope.alerts || {};
+              $scope.alerts["rollback"] = 
                 {
                   type: "error",
                   message: "An error occurred while rolling back the deployment.",
                   details: $filter('getErrorDetails')(result)
-                }
-              ];
+                };
             }
           );
         },
         function(result) {
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};          
+          $scope.alerts["rollback"] = 
             {
               type: "error",
               message: "An error occurred while rolling back the deployment.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };
@@ -173,21 +173,21 @@ angular.module("openshiftConsole")
       // update the deployment with cancellation annotations
       DataService.update("replicationcontrollers", deploymentName, req, $scope).then(
         function() {
-            $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["cancel"] = 
             {
               type: "success",
               message: "Cancelling deployment " + deploymentName + " of " + deploymentConfigName + ".",
-            }
-          ];
+            };
         },
         function(result) {
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["cancel"] = 
             {
               type: "error",
               message: "An error occurred while cancelling the deployment.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };

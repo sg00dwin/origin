@@ -23,6 +23,8 @@ angular.module('openshiftConsole')
       }
     ];
 
+    var objectWatches = [];
+
     project.get($routeParams.project).then(function(resp) {
       angular.extend($scope, {
         project: resp[0],
@@ -32,6 +34,17 @@ angular.module('openshiftConsole')
         // success
         function(imageStream) {
           $scope.imageStream = imageStream;
+
+          // If we found the item successfully, watch for changes on it
+          objectWatches.push(DataService.watchObject("imagestreams", $routeParams.image, $scope, function(imageStream, action) {
+            if (action === "DELETED") {
+              $scope.alerts["deleted"] = {
+                type: "warning",
+                message: "This image stream has been deleted."
+              }; 
+            }
+            $scope.imageStream = imageStream;
+          }));          
         },
         // failure
         function(e) {
@@ -43,4 +56,8 @@ angular.module('openshiftConsole')
         }
       );
     });
+
+    $scope.$on('$destroy', function(){
+      DataService.unwatchAllObjects(objectWatches);
+    }); 
   });

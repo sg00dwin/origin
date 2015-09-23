@@ -23,6 +23,8 @@ angular.module('openshiftConsole')
       }
     ];
 
+    var objectWatches = [];
+
     project.get($routeParams.project).then(function(resp) {
       angular.extend($scope, {
         project: resp[0],
@@ -32,6 +34,17 @@ angular.module('openshiftConsole')
         // success
         function(pod) {
           $scope.pod = pod;
+
+          // If we found the item successfully, watch for changes on it
+          objectWatches.push(DataService.watchObject("pods", $routeParams.pod, $scope, function(pod, action) {
+            if (action === "DELETED") {
+              $scope.alerts["deleted"] = {
+                type: "warning",
+                message: "This pod has been deleted."
+              }; 
+            }
+            $scope.pod = pod;
+          }));          
         },
         // failure
         function(e) {
@@ -43,4 +56,8 @@ angular.module('openshiftConsole')
         }
       );
     });
+
+    $scope.$on('$destroy', function(){
+      DataService.unwatchAllObjects(objectWatches);
+    });    
   });

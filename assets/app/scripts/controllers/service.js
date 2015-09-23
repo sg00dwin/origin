@@ -23,6 +23,8 @@ angular.module('openshiftConsole')
       }
     ];
 
+    var objectWatches = [];
+
     project.get($routeParams.project).then(function(resp) {
       angular.extend($scope, {
         project: resp[0],
@@ -32,6 +34,17 @@ angular.module('openshiftConsole')
         // success
         function(service) {
           $scope.service = service;
+
+          // If we found the item successfully, watch for changes on it
+          objectWatches.push(DataService.watchObject("services", $routeParams.service, $scope, function(service, action) {
+            if (action === "DELETED") {
+              $scope.alerts["deleted"] = {
+                type: "warning",
+                message: "This service has been deleted."
+              }; 
+            }
+            $scope.service = service;
+          }));          
         },
         // failure
         function(e) {
@@ -42,5 +55,9 @@ angular.module('openshiftConsole')
           };
         }
       );
+    });
+
+    $scope.$on('$destroy', function(){
+      DataService.unwatchAllObjects(objectWatches);
     });
   });

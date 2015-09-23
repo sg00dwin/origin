@@ -26,6 +26,7 @@ angular.module('openshiftConsole')
     $scope.emptyMessage = "Loading...";
 
     var watches = [];
+    var objectWatches = [];
 
     project.get($routeParams.project).then(function(resp) {
       angular.extend($scope, {
@@ -36,6 +37,17 @@ angular.module('openshiftConsole')
         // success
         function(buildConfig) {
           $scope.buildConfig = buildConfig;
+
+          // If we found the item successfully, watch for changes on it
+          objectWatches.push(DataService.watchObject("buildconfigs", $routeParams.buildconfig, $scope, function(buildConfig, action) {
+            if (action === "DELETED") {
+              $scope.alerts["deleted"] = {
+                type: "warning",
+                message: "This build configuration has been deleted."
+              }; 
+            }
+            $scope.buildConfig = buildConfig;
+          }));           
         },
         // failure
         function(e) {
@@ -97,5 +109,6 @@ angular.module('openshiftConsole')
 
     $scope.$on('$destroy', function(){
       DataService.unwatchAll(watches);
+      DataService.unwatchAllObjects(objectWatches);
     });
   });

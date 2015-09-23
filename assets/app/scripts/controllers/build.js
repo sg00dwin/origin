@@ -30,6 +30,7 @@ angular.module('openshiftConsole')
     ];
 
     var watches = [];
+    var objectWatches = [];
 
     project.get($routeParams.project).then(function(resp) {
       angular.extend($scope, {
@@ -44,6 +45,17 @@ angular.module('openshiftConsole')
           if (buildNumber) {
             $scope.breadcrumbs[2].title = "#" + buildNumber;
           }
+
+          // If we found the item successfully, watch for changes on it
+          objectWatches.push(DataService.watchObject("builds", $routeParams.build, $scope, function(build, action) {
+            if (action === "DELETED") {
+              $scope.alerts["deleted"] = {
+                type: "warning",
+                message: "This build has been deleted."
+              }; 
+            }
+            $scope.build = build;
+          }));
         },
         // failure
         function(e) {
@@ -104,5 +116,6 @@ angular.module('openshiftConsole')
 
     $scope.$on('$destroy', function(){
       DataService.unwatchAll(watches);
+      DataService.unwatchAllObjects(objectWatches);
     });
   });

@@ -15,21 +15,21 @@ angular.module("openshiftConsole")
       };
       DataService.create("buildconfigs/instantiate", buildConfigName, req, $scope).then(
         function(build) { //success
-            $scope.alerts = [
-            {
-              type: "success",
-              message: "Build " + build.metadata.name + " has started."
-            }
-          ];
+            $scope.alerts = $scope.alerts || {};
+            $scope.alerts["create"] = 
+              {
+                type: "success",
+                message: "Build " + build.metadata.name + " has started."
+              };
         },
         function(result) { //failure
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["create"] = 
             {
               type: "error",
               message: "An error occurred while starting the build.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };
@@ -39,21 +39,21 @@ angular.module("openshiftConsole")
       canceledBuild.status.cancelled = true;
       DataService.update("builds", canceledBuild.metadata.name, canceledBuild, $scope).then(
         function() {
-            $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["cancel"] = 
             {
               type: "success",
               message: "Cancelling build " + build.metadata.name + " of " + buildConfigName + "."
-            }
-          ];
+            };
         },
         function(result) {
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["cancel"] = 
             {
               type: "error",
               message: "An error occurred cancelling the build.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };
@@ -69,21 +69,21 @@ angular.module("openshiftConsole")
       };
       DataService.create("builds/clone", buildName, req, $scope).then(
         function(build) { //success
-            $scope.alerts = [
+            $scope.alerts = $scope.alerts || {};
+            $scope.alerts["rebuild"] = 
             {
               type: "success",
               message: "Build " + buildName + " is being rebuilt as " + build.metadata.name + "."
-            }
-          ];
+            };
         },
         function(result) { //failure
-          $scope.alerts = [
+          $scope.alerts = $scope.alerts || {};
+          $scope.alerts["rebuild"] = 
             {
               type: "error",
               message: "An error occurred while rerunning the build.",
               details: $filter('getErrorDetails')(result)
-            }
-          ];
+            };
         }
       );
     };
