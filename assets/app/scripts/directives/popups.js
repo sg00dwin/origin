@@ -14,12 +14,8 @@ angular.module('openshiftConsole')
             case "tooltip":
               $(element).tooltip();
               break;
-            case "dropdown":
-              // Regular data-toggle="dropdown" gets initialized automatically, this is to override only when we want it to open on hover
-              console.log(attrs);
-              if (attrs.trigger === "hover") {
-                $(element).bootstrapDropdownHover();
-              }
+            case "dropdown-hover":
+              $(element).dropdownHover({delay: 200});
               break;
           }
         }
