@@ -44,10 +44,15 @@
           .box-shadow(none);
         }
         ul.nav-sidenav > li {
-          outline: 1px solid @navbar-os-project-border-color;
+          outline: 1px solid @navbar-os-sidebar-border-color;
           margin-bottom: 1px;
           &.active {
             > a {
+              background-color: @sidebar-os-active-bg;
+              color: lighten(@sidebar-os-color, 10%);
+              &:hover, &:focus {
+                background-color: @sidebar-os-active-bg;
+              }
               &:after {
                 content: '';
                 width: 4px;
@@ -64,30 +69,24 @@
             }
           }
           > a {
-            color: inherit;
+            color: @sidebar-os-color;
+            font-weight: 300;
             &:hover, &:focus {
-              background-color: @sidebar-os-hover-bg;
-              color: #000;
+              background-color: transparent;
+              color: lighten(@sidebar-os-color, 10%);
               .fa {
                 color: @sidebar-os-active;
               }
             }
             .fa {
-              color: lighten(@navbar-os-project-menu-color, 25%);
+              color: @sidebar-os-icon-color;
             }
           }
-          &.active {
-            > a {
-              &, &:hover, &:focus {
-                background-color: @sidebar-os-drawer;
-              }
-            }
-          }
-          .hover-nav {
-            ul.nav-sidenav-secondary {
+          .nav-sidenav-secondary {
+            ul {
               > li {
                 &:first-child {
-                  border-top: 1px solid @navbar-os-project-border-color;
+                  border-top: 1px solid @navbar-os-sidebar-border-color;
                 }
                 &.active a {
                   text-decoration: underline;
@@ -146,7 +145,7 @@
         .flex(@columns: 0 0 @sidebar-left-width-sm);
         .navbar-sidebar {
           font-size: @font-size-base - 2;
-          border-right: 1px solid @navbar-os-project-border-color;
+          border-right: 1px solid @navbar-os-sidebar-border-color;
           border-bottom: 0;
           width: @sidebar-left-width-sm;
           position: absolute;
@@ -159,8 +158,9 @@
               display: none;
           }
           // Sidebar hover menu
-          .hover-nav.dropdown-menu {
-            border-color: @navbar-os-project-border-color;
+          .nav-sidenav-secondary.hover-nav.dropdown-menu {
+            background-color: @sidebar-os-bg;
+            border-color: @navbar-os-sidebar-border-color;
             .box-shadow(2px 2px 2px rgba(0, 0, 0, 0.125));
             font-size: @font-size-base - 1;
             left: 100%;
@@ -171,8 +171,11 @@
           }
           ul.nav-sidenav > li {
             position: static;
+            &.active.open > a {
+              background-color: @sidebar-os-active-bg;
+            }
             &.open > a {
-              background-color: @sidebar-os-bg;
+              background-color: transparent;
               margin-right: -1px;
               padding-right: @sidebar-os-padding-y + 1;
               z-index: 9999;
@@ -189,8 +192,8 @@
                 margin: 0;
               }
             }
-            .hover-nav {
-              ul.nav-sidenav-secondary {
+            .nav-sidenav-secondary.hover-nav {
+              ul{
                 li {
                   &:first-child {
                     border-top: none;
@@ -207,7 +210,6 @@
       &.show-sidebar-right {
         .sidebar-right {
           display: block;
-          border-left: 1px solid @navbar-os-project-border-color;
           .flex(@columns: 0 0 @sidebar-right-width-sm);
         }
       }
@@ -244,7 +246,7 @@
         .navbar-sidebar {
           width: @sidebar-left-width-md;
           font-size: @font-size-base + 1;
-          .hover-nav.dropdown-menu {
+          .nav-sidenav-secondary.hover-nav.dropdown-menu {
             font-size:  @font-size-base + 1;
           }
           ul.nav-sidenav > li {
