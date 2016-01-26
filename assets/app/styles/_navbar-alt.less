@@ -113,11 +113,20 @@
     margin-right: 0;
     max-height: none;
     padding: 21px;
-    .username {
+    .username, .status-issue {
       font-weight: 300;
       position: relative;
       top: -2px;
       padding: 0 2px;
+    }
+    .status-issue:before {
+      color: @brand-warning;
+      content: "\e61c";
+      display: inline-block;
+      font-family: 'PatternFlyIcons-webfont';
+      font-size: 17px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     &:hover, &:focus {
       background-color: transparent;
