@@ -138,7 +138,7 @@
     float: left;
     margin: 0;
     padding-top: 0;
-    max-width: 480px;
+    max-width: 390px;
     .bootstrap-select.btn-group {
       .btn {
         padding: 9px 40px 7px 30px;
@@ -157,7 +157,17 @@
     }
     .bootstrap-select .dropdown-toggle {
       height: 60px;
-      min-width: 300px;
     }
+  }
+}
+
+@media (min-width: @screen-md-min) {
+  .navbar-project-menu {
+    border-bottom:0;
+    border-top:0;
+    float: left;
+    margin: 0;
+    padding-top: 0;
+    max-width: 480px;
   }
 }

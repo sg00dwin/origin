@@ -1,6 +1,6 @@
 <ul class="nav navbar-nav navbar-right navbar-iconic">
-  <li>
-    <span id="outage" class="status-issue nav-item-iconic"></span>
+  <li class="hidden-xs">
+    <span class="system-status"></span>
   </li>
   <li class="dropdown">
     <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -12,10 +12,12 @@
       <li><a href="https://www.openshift.org">About</a></li>
     </ul>
   </li>
+  <li>
+  </li>
   <li uib-dropdown ng-cloak ng-if="user">
     <a href="" uib-dropdown-toggle id="user-dropdown" class="nav-item-iconic">
       <span class="pf-icon pficon-user"></span>
-      <span class="username">{{user.fullName || user.metadata.name}}</span> <span class="caret"></span>
+      <span class="username truncate">{{user.fullName || user.metadata.name}}</span> <span class="caret"></span>
     </a>
     <ul class="uib-dropdown-menu" aria-labelledby="user-dropdown">
       <li>

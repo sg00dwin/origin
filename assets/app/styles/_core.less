@@ -830,3 +830,25 @@ h1 small.meta {
 .action-divider {
   color: @gray-light;
 }
+
+
+// System status notification
+@media (min-width: @screen-sm-min) {
+  .system-status-mobile {
+    display: none !important;
+  }
+}
+.system-status-mobile {
+  .status-block {
+    background-color: @system-status-bg;
+    display: block;
+    padding: 1px 14px;
+    &:hover, &:focus {
+      text-decoration: none;
+    }
+  }
+  .status-issue {
+    color: #111;
+    padding-left: 5px;
+  }
+}

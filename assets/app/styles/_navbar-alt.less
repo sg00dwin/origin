@@ -105,32 +105,30 @@
   .nav-item-iconic {
     // utiltity links
     cursor: pointer;
+    display: block;
     line-height: 1;
     max-height: (@navbar-pf-alt-height - @navbar-pf-alt-border-width); // to keep Firefox from oversizing icons
-    padding: @navbar-pf-alt-nav-item-iconic-padding;
     position: relative;
     color: @navbar-pf-alt-color;
     margin-right: 0;
     max-height: none;
     padding: 21px;
     .username, .status-issue {
+      display: inline-block;
       font-weight: 300;
+      max-width: 100px;
+      padding: 0 2px;
       position: relative;
       top: -2px;
-      padding: 0 2px;
+      vertical-align: bottom;
     }
-    .status-issue:before {
-      color: @brand-warning;
-      content: "\e61c";
-      display: inline-block;
-      font-family: 'PatternFlyIcons-webfont';
-      font-size: 17px;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    &.status-block {
+      padding-left: 0;
     }
     &:hover, &:focus {
       background-color: transparent;
       color: @navbar-pf-alt-active-color;
+      text-decoration: none;
       .caret, .fa, .glyphicon, .pf-icon {
         color: @navbar-pf-alt-active-color;
       }
@@ -219,7 +217,6 @@
     .flex(@columns: 0 0 40px);
   }
 }
-
 
 @media (min-width: @screen-sm-min) {
   .navbar-pf-alt {
