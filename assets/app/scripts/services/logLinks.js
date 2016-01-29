@@ -5,33 +5,29 @@ angular.module('openshiftConsole')
     '$anchorScroll',
     '$document',
     '$location',
-    '$timeout',
     '$window',
-    function($anchorScroll, $document, $location, $timeout, $window) {
+    function($anchorScroll, $document, $location, $window) {
       // TODO (bpeterse): a lot of these functions are generic and could be moved/renamed to
       // a navigation oriented service.
 
-      var breakpoint = {
-        'mobile': 768
-      };
 
-      var scrollTop = function() {
-        if($(window).width() < breakpoint.mobile) {
-          $window.scrollTo(null, 0);
+      var scrollTop = function(node) {
+        if(!node) {
+          window.scrollTo(null, 0);
         } else {
-          var objDiv = $(".middle-container.has-scroll")[0];
-          objDiv.scrollTop = 0;
+          node.scrollTop = 0;
         }
       };
 
-      var scrollBottom = function() {
-        if($(window).width() < breakpoint.mobile) {
-           $window.scrollTo(null, $(document).height() - $(window).height());
+
+      var scrollBottom = function(node) {
+        if(!node) {
+          window.scrollTo(0, document.body.scrollHeight - document.body.clientHeight);
         } else {
-          var objDiv = $(".middle-container.has-scroll")[0];
-          objDiv.scrollTop = objDiv.scrollHeight;
+          node.scrollTop = node.scrollHeight;
         }
       };
+
 
       var scrollTo = function(anchor, event) {
         // sad face. stop reloading the page!!!!
@@ -41,11 +37,10 @@ angular.module('openshiftConsole')
         $anchorScroll(anchor);
       };
 
+
       // @params an object or array of objects
       var newTab = function(params) {
-        params = _.isArray(params) ?
-                  params :
-                  [params];
+        params = _.flatten([params]);
         var uri = new URI();
         _.each(params, function(param) {
           uri.addSearch(param);
