@@ -3,7 +3,7 @@
 // -----------------------------------------------
 
 .navbar-project-menu {
-  width: 100%;
+  // width: 100%; CLEANUP
   .navbar-project-search {
     display: inline-block;
   }
@@ -31,7 +31,7 @@
       box-shadow: none;
       border-top: 0;
       line-height: @line-height-base;
-      padding: 7px 45px 7px 20px;
+      padding: 7px 50px 7px 20px;
       transition: none;
       width: 100%;
       &:hover, &:focus {
@@ -53,9 +53,6 @@
         position: absolute;
         top: 0;
         width: 1px;
-      }
-      .filter-option {
-        .truncate();
       }
     }
     .dropdown-toggle .caret {
@@ -104,11 +101,18 @@
   }
 }
 
+.navbar-project-menu .bootstrap-select.btn-group .btn .filter-option {
+  max-width: 200px;
+  // width: 100%; CLEANUP
+  .truncate();
+}
+
 @media (max-width: @screen-xs-max) {
   // Project nav at mobile widths
   .navbar-project-menu {
     .form-group {
       display: inline;
+      // min-width: 0; // enable truncation
     }
     .bootstrap-select.btn-group .dropdown-menu {
       max-width: 100%;
@@ -131,6 +135,12 @@
   }
 }
 
+@media (min-width: @screen-xs-min) {
+  .navbar-project-menu .bootstrap-select.btn-group .btn .filter-option {
+    max-width: 310px;
+  }
+}
+
 @media (min-width: @screen-sm-min) {
   .navbar-project-menu {
     border-bottom:0;
@@ -138,10 +148,10 @@
     float: left;
     margin: 0;
     padding-top: 0;
-    max-width: 480px;
+    // max-width: 450px; CLEANUP
     .bootstrap-select.btn-group {
       .btn {
-        padding: 15px 40px 15px 30px;
+        padding: 15px 50px 15px 30px;
         &:before {
           color: @gray-light;
           content: 'Project';
@@ -159,5 +169,29 @@
       height: 60px;
       min-width: 300px;
     }
+  }
+  .navbar-project-menu .bootstrap-select .dropdown-toggle {
+    max-width: 330px;
+  }
+  .navbar-project-menu .bootstrap-select.btn-group .btn .filter-option {
+    max-width: 470px;
+  }
+}
+
+@media (min-width: @screen-md-min) {
+  .navbar-project-menu .bootstrap-select .dropdown-toggle {
+    max-width: 520px;
+  }
+  .navbar-project-menu .bootstrap-select.btn-group .btn .filter-option {
+    max-width: 580px;
+  }
+}
+
+@media (min-width: @screen-lg-min) {
+  .navbar-project-menu .bootstrap-select .dropdown-toggle {
+    max-width: 660px;
+  }
+  .navbar-project-menu .bootstrap-select.btn-group .btn .filter-option {
+    max-width: 720px;
   }
 }
