@@ -55,6 +55,7 @@
   }
   .navbar-iconic {
     margin-right: 0;
+    padding-right: 20px;
     .dropdown-menu {
       &:before,&:after {
         display: block;
@@ -113,7 +114,6 @@
     color: @navbar-pf-alt-color;
     margin-right: 0;
     max-height: none;
-    padding: 21px;
     .username {
       font-weight: 300;
       position: relative;
@@ -240,6 +240,12 @@
         margin-top: 0;
       }
     }
+    .navbar-iconic {
+      .username {
+        display: inline-block;
+        max-width: 110px;
+      }
+    }
   }
   .navbar-flex-btn {
     &.toggle-menu {
@@ -253,10 +259,24 @@
     }
   }
 }
+@media (min-width: @screen-md-min) {
+  .navbar-pf-alt {
+    .navbar-iconic {
+      .username {
+        max-width: 140px;
+      }
+    }
+  }
+}
 @media (min-width: @screen-lg-min) {
   .navbar-pf-alt {
     .navbar-header {
       width: 108px;
+    }
+    .navbar-iconic {
+      .username {
+        max-width: 190px;
+      }
     }
   }
 }

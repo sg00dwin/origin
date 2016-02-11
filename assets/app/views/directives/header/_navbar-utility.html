@@ -1,12 +1,6 @@
 <ul class="nav navbar-nav navbar-right navbar-iconic">
   <li uib-dropdown>
     <a uib-dropdown-toggle class="nav-item-iconic" id="dropdownMenu1">
-      <span title="System Status" class="fa status-icon pficon-warning-triangle-o"></span>
-      <span class="status-issue">Status</span>
-    </a>
-  </li>
-  <li uib-dropdown>
-    <a uib-dropdown-toggle class="nav-item-iconic" id="dropdownMenu1">
       <span title="Help" class="fa pficon-help" aria-hidden="true"></span>
       <span class="sr-only">Help</span>
       <span class="caret" aria-hidden="true"></span>
@@ -19,7 +13,7 @@
   <li uib-dropdown ng-cloak ng-if="user">
     <a href="" uib-dropdown-toggle id="user-dropdown" class="nav-item-iconic">
       <span class="pf-icon pficon-user" aria-hidden="true"></span>
-      <span class="username">{{user.fullName || user.metadata.name}}</span> <span class="caret" aria-hidden="true"></span>
+      <span title="{{user.fullName || user.metadata.name}}" class="username truncate">{{user.fullName || user.metadata.name}}</span> <span class="caret" aria-hidden="true"></span>
     </a>
     <ul class="uib-dropdown-menu" aria-labelledby="user-dropdown">
       <li>
