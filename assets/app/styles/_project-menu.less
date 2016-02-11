@@ -3,7 +3,7 @@
 // -----------------------------------------------
 
 .navbar-project-menu {
-  // width: 100%; CLEANUP
+  // width: 100%; ie11 gives the container width
   .navbar-project-search {
     display: inline-block;
   }
@@ -145,10 +145,11 @@
   .navbar-project-menu {
     border-bottom:0;
     border-top:0;
-    float: left;
+        display: inline-block;
+    // float: left;
     margin: 0;
     padding-top: 0;
-    // max-width: 450px; CLEANUP
+    // max-width: 440px; ie11 - makes the container stretches to 100% so the add to project btn is to the right
     .bootstrap-select.btn-group {
       .btn {
         padding: 15px 50px 15px 30px;
