@@ -1,0 +1,31 @@
+/* Data toolbar
+   - Includes customizations for label filter input and active filter
+---------------------------------------------------------------------------- */
+
+@filter-font-size-mobile: @font-size-small + 1;
+
+.data-toolbar {
+ .flex-display(@display: flex);
+ .flex(@columns: 1 1 0%);
+ .flex-wrap(@wrap: wrap);
+ padding: 5px 0;
+ .data-toolbar-filter {
+   .flex-display(@display: flex);
+   .flex(@columns: 1 1 0%);
+    min-width: 0;
+ }
+ .data-toolbar-views {
+   .flex(@columns: 0 1 auto);
+   @media (min-width: @screen-lg-min) {
+     .flex(@columns: 0 1 auto);
+   }
+   text-align: right;
+ }
+}
+
+project-filter {
+  min-width: 0;
+  @media (max-width: @screen-xs-max) {
+    width: 100%; // Extends flex container full width of flex parent
+  }
+}
