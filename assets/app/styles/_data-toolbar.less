@@ -2,8 +2,6 @@
    - Includes customizations for label filter input and active filter
 ---------------------------------------------------------------------------- */
 
-@filter-font-size-mobile: @font-size-small + 1;
-
 .data-toolbar {
  .flex-display(@display: flex);
  .flex(@columns: 1 1 0%);
@@ -24,8 +22,10 @@
 }
 
 project-filter {
-  min-width: 0;
+  .flex-display(@display: flex);
+  .flex-direction(@direction: column);
+  min-width: 300px; // set default
   @media (max-width: @screen-xs-max) {
-    width: 100%; // Extends flex container full width of flex parent
+    min-width: initial;
   }
 }

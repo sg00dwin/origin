@@ -11,7 +11,23 @@
           </div>
           <alerts alerts="alerts"></alerts>
           <div ng-if="!renderOptions.showGetStarted" class="data-toolbar">
-            <div class="data-toolbar-filter">
+            <script type="text/javascript">
+            $(function() {
+              $('select').on('click', function() {
+                $('.data-toolbar-filter').focus();
+              });
+            });
+            </script>
+<div class="data-toolbar-filter" tabindex=0>
+  <span class="selector">Fake</span>
+  <span class="selector">Label</span>
+  <span class="selector">Selector</span>
+  <select>
+    <option>foo</option>
+    <option>bar</option>
+  </select>
+</div>
+            <div class="data-toolbar-filter" tabindex="0">
               <project-filter></project-filter>
             </div>
           </div>

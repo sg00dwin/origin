@@ -24,7 +24,7 @@
     "lodash": "3.10.1",
     "sifter": "0.3.4",
     "microplugin": "0.0.3",
-    "selectize": "0.11.2",
+    "selectize": "0.12.1",
     "messenger": "1.4.1",
     "kubernetes-topology-graph": "0.0.23",
     "kubernetes-label-selector": "git://github.com/sg00dwin/label-selector#flex-label-filter",

@@ -152,11 +152,8 @@ project-filter {
       min-height: @navbar-input-height;
       border: @navbar-menu-border;
       border-radius: @selectize-border-radius;
-      &.filter-active-focus {
-        border: 1px solid tomato !important;
-      }
-      &.filter-inactive {
-        border: 1px solid skyblue !important;
+      &.filter-active {
+        .filter-active-focus();
       }
       .selectize-control {
         .flex-display(@display: inline-flex);
